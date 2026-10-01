@@ -1,0 +1,71 @@
+const imgEllipse = "https://www.figma.com/api/mcp/asset/460bf308-371f-453d-848e-e61c819d98ca.svg";
+const imgEllipse1 = "https://www.figma.com/api/mcp/asset/73f1838e-a984-41c0-8a98-df16a67a4556.svg";
+
+export default function Component26OptionalSyncSetup() {
+  return (
+    <div className="bg-[#171412] overflow-clip relative rounded-[24px] size-full" data-node-id="4:92" data-name="26 · Optional Sync Setup">
+      <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[21px] not-italic text-[#f5eee7] text-[12px] top-[16px] w-[44px]" data-node-id="4:93">
+        9:41
+      </p>
+      <div className="absolute left-[16px] size-[24px] top-[52px]" data-node-id="4:94" data-name="Ellipse">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse} />
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[25.2px] leading-[normal] left-[48px] not-italic text-[#f5eee7] text-[18px] top-[50px] tracking-[-0.8px] w-[100px]" data-node-id="4:95">
+        nook
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[42px] leading-[normal] left-[16px] not-italic text-[#f5eee7] text-[30px] top-[102px] tracking-[-0.8px] w-[343px]" data-node-id="4:96">
+        Keep Nook yours
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18.2px] leading-[normal] left-[16px] not-italic text-[#cbbfb4] text-[13px] top-[145px] w-[343px]" data-node-id="4:97">
+        Start offline. Sync only if you want it.
+      </p>
+      <div className="absolute bg-[#221d1a] h-[128px] left-[16px] overflow-clip rounded-[20px] top-[188px] w-[343px]" data-node-id="4:98" data-name="Frame">
+        <div className="absolute left-[16px] size-[42px] top-[18px]" data-node-id="4:99" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[21px] leading-[normal] left-[72px] not-italic text-[#f5eee7] text-[15px] top-[16px] w-[250px]" data-node-id="4:100">
+          Use Nook without an account
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[16px] not-italic text-[#cbbfb4] text-[12px] top-[70px] w-[311px]" data-node-id="4:101">
+          Everything stays on this device. You can turn on sync later.
+        </p>
+        <div className="absolute bg-[#ffce00] h-[28px] left-[16px] overflow-clip rounded-[14px] top-[96px] w-[82px]" data-node-id="4:102" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#171412] text-[12px] top-[6px] w-[58px]" data-node-id="4:103">
+            DEFAULT
+          </p>
+        </div>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18.2px] leading-[normal] left-[16px] not-italic text-[#f5eee7] text-[13px] top-[350px] w-[280px]" data-node-id="4:104">
+        Or sync across Android + web
+      </p>
+      <div className="absolute bg-[#3270e6] h-[48px] left-[16px] overflow-clip rounded-[24px] top-[382px] w-[343px]" data-node-id="4:105" data-name="Frame">
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[21px] leading-[normal] left-[171.5px] not-italic text-[15px] text-center text-white top-[14px] w-[343px]" data-node-id="4:106">
+          Continue with Google
+        </p>
+      </div>
+      <div className="absolute bg-[#342d28] h-[48px] left-[16px] overflow-clip rounded-[24px] top-[444px] w-[343px]" data-node-id="4:107" data-name="Frame">
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[21px] leading-[normal] left-[171.5px] not-italic text-[#f5eee7] text-[15px] text-center top-[14px] w-[343px]" data-node-id="4:108">
+          Use email
+        </p>
+      </div>
+      <div className="[word-break:break-word] absolute bg-[#342d28] h-[104px] leading-[normal] left-[16px] not-italic overflow-clip rounded-[18px] top-[524px] w-[343px]" data-node-id="4:109" data-name="Frame">
+        <p className="absolute font-['Inter:Bold'] font-bold h-[18.2px] left-[16px] text-[#f5eee7] text-[13px] top-[16px] w-[280px]" data-node-id="4:110">
+          Turning sync on later is safe.
+        </p>
+        <p className="absolute font-['Inter:Regular'] font-normal h-[18px] left-[16px] text-[#cbbfb4] text-[11px] top-[44px] w-[300px]" data-node-id="4:111">{`Your local Nook becomes the starting copy; it isn't replaced by an empty cloud.`}</p>
+      </div>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18px] leading-[normal] left-[187.5px] not-italic text-[#cbbfb4] text-[12px] text-center top-[660px] w-[343px]" data-node-id="4:112">
+        Continue offline
+      </p>
+    </div>
+  );
+}
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

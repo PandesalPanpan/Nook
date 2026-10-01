@@ -1,0 +1,29 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function owner(uid) { return request.auth != null && request.auth.uid == uid; }
+    function attachment(uid, id) {
+      return firestore.get(/databases/(default)/documents/users/$(uid)/records/$(id)).data;
+    }
+    function live(uid, id) {
+      let record = attachment(uid, id);
+      let parent = firestore.get(/databases/(default)/documents/users/$(uid)/records/$(record.data.ownerId)).data;
+      return record.kind == 'attachment' && !record.deleted && !parent.deleted;
+    }
+    function valid(uid, id) {
+      return request.resource.size <= 50 * 1024 * 1024
+        && request.resource.size == attachment(uid, id).data.size
+        && request.resource.metadata.sha256 is string
+        && request.resource.metadata.sha256.matches('^[0-9a-f]{64}$');
+    }
+    match /users/{uid}/attachments/{attachmentId}/original {
+      allow read: if owner(uid) && live(uid, attachmentId);
+      allow create: if owner(uid) && live(uid, attachmentId) && valid(uid, attachmentId)
+        && (resource == null || request.resource.metadata.sha256 == resource.metadata.sha256);
+      allow update: if owner(uid) && live(uid, attachmentId) && valid(uid, attachmentId)
+        && request.resource.metadata.sha256 == resource.metadata.sha256;
+      // Cleanup remains possible after the metadata tombstone is committed.
+      allow delete: if owner(uid);
+    }
+  }
+}

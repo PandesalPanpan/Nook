@@ -1,0 +1,9 @@
+
+app.nook.WidgetFontScaleTest:.
+app.nook.WidgetRenderTest:.
+
+Time: 16.376
+
+OK (2 tests)
+
+

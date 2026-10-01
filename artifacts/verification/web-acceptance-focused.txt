@@ -1,0 +1,30 @@
+
+> nook@0.1.0 test:e2e
+> playwright test
+
+[WebServer] (node:15408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 16 tests using 1 worker
+
+(node:5784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 apps\web\e2e\acceptance.spec.ts:27:1 › desktop Today and Inbox source hierarchy, visible contrast and local actions work offline (1.7s)
+  -   2 apps\web\e2e\accounts.spec.ts:3:1 › account settings register, merge, disconnect and reopen the same account
+  -   3 apps\web\e2e\accounts.spec.ts:38:1 › cloud originals arrive in a separate browser and remain available offline
+  ✓   4 apps\web\e2e\ai.spec.ts:2:1 › AI proposals require explicit selection and confirmation and Off clears the local key (1.0s)
+  ✓   5 apps\web\e2e\context.spec.ts:3:1 › PARA context and related work persist offline on projects, tasks and notes (2.1s)
+  ✓   6 apps\web\e2e\context.spec.ts:34:1 › legacy parent-only subtasks can be chosen as Project next actions offline and reopened (1.6s)
+  ✓   7 apps\web\e2e\learning.spec.ts:2:1 › PARA guide stays optional and contextual dismissals persist offline with suppression and reset (1.8s)
+  ✓   8 apps\web\e2e\note.spec.ts:6:1 › desktop note source layout, keyboard links and original files persist offline (2.4s)
+  ✓   9 apps\web\e2e\offline.spec.ts:4:1 › weekly review keeps its draft and saves one focus note offline (1.5s)
+  ✓  10 apps\web\e2e\offline.spec.ts:30:1 › a dated daily note edits, links and reopens without duplicate creation offline (1.4s)
+  ✓  11 apps\web\e2e\offline.spec.ts:54:1 › saving an unsaved project draft preserves its archive state offline (1.3s)
+  ✓  12 apps\web\e2e\offline.spec.ts:72:1 › Markdown selection formatting, note links, backlinks and original attachments work offline (2.1s)
+  ✓  13 apps\web\e2e\offline.spec.ts:119:1 › repeat configuration keeps unsaved edits and creates the next task offline (1.2s)
+  ✓  14 apps\web\e2e\offline.spec.ts:151:1 › capture, clarify, edit, organize, complete, search, delete and reopen offline (1.8s)
+  ✓  15 apps\web\e2e\offline.spec.ts:202:1 › keyboard capture is accessible and opens without a required type or folder (299ms)
+  ✓  16 apps\web\e2e\project.spec.ts:5:1 › desktop Project source workspace and local task controls persist offline (2.0s)
+
+  2 skipped
+  14 passed (24.8s)

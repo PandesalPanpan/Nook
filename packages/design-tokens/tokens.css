@@ -1,0 +1,8 @@
+:root {
+  --bg: #171412; --surface: #221d1a; --elevated: #342d28; --border: #453d37;
+  --text: #f5eee7; --secondary: #cbbfb4; --muted: #9c9187; --primary: #3270e6;
+  --orange: #ff7e1d; --yellow: #ffce00; --indigo: #5c4db8; --teal: #3fae9b;
+  --success: #4ebb78; --danger: #ef6a67;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-6: 24px;
+  --radius-s: 12px; --radius-m: 16px; --radius-l: 20px; --radius-pill: 30px;
+}

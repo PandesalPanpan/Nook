@@ -1,0 +1,27 @@
+[
+  {
+    "node": "4:92",
+    "slot": "Local-only card marker · 42 × 42 dp",
+    "path": "apps/android/app/src/main/assets/figma/4-92-imgEllipse1.svg",
+    "callsite": "integration/AccountControls.kt · local-only AccountCard"
+  },
+  {
+    "node": "2:940",
+    "slot": "Local-first card marker · 42 × 42 dp",
+    "path": "apps/android/app/src/main/assets/figma/2-940-imgEllipse1.svg",
+    "callsite": "integration/AccountControls.kt · authenticated AccountCard"
+  },
+  {
+    "node": "2:940",
+    "slot": "Each actual queued-record marker · 32 × 32 dp",
+    "path": "apps/android/app/src/main/assets/figma/2-940-imgEllipse2.svg",
+    "callsite": "integration/AccountControls.kt · outbox row"
+  },
+  {
+    "node": "4:92,2:940",
+    "slot": "Shared brand marker · 24 × 24 dp",
+    "path": "apps/android/app/src/main/assets/figma/2-121-imgEllipse.svg",
+    "callsite": "MainActivity.kt · Dot",
+    "verification": "Downloaded 4-92-imgEllipse.svg and 2-940-imgEllipse.svg are byte-identical to the reused 2-121 asset (SHA256 AB3011C939362BC689234A29D7A57FA9610545032B3390ADDF8CE700403CDBC1)."
+  }
+]

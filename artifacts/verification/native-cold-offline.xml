@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="app.nook.AccountSwitchFlowTest" tests="49" failures="0" errors="0" skipped="8" time="148.407" timestamp="2026-10-01T02:43:59" hostname="localhost">
+  <properties>
+    <property name="device" value="Iza_Pixel_8_API_36(AVD) - 16" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="switchingNamespaceDiscardsThePreviousEditorDraft" classname="app.nook.AccountSwitchFlowTest" time="5.65" />
+  <testcase name="automaticAttemptAnnouncesProgressSafeFailureAndRecovery" classname="app.nook.AccountSyncStatusTest" time="1.826" />
+  <testcase name="fileProgressShowsActualRoomTransferRetryAndAccountFencingAtLargeText" classname="app.nook.AccountSyncStatusTest" time="1.767" />
+  <testcase name="renderedSuggestionsDoNotCreateTasksUntilSelectedAndConfirmed" classname="app.nook.AiConfirmationTest" time="2.808" />
+  <testcase name="deviceKeystoreEncryptsKeysAndBindsCiphertextToAccount" classname="app.nook.AiSettingsTest" time="0.135" />
+  <testcase name="workStatusIsAccountScopedAndSurvivesObserverRecreation" classname="app.nook.BackgroundSyncFlowTest" time="0.29" />
+  <testcase name="invalidDateHidesUndatedWorkAndValidDateOpensItsLocalDailyNote" classname="app.nook.CalendarAgendaTest" time="7.337" />
+  <testcase name="largeTextDaysKeepFullTouchTargetsAtNormalAndNarrowWidths" classname="app.nook.CalendarLayoutTest" time="14.994" />
+  <testcase name="populatedCalendarKeepsDoDateAndDeadlineSeparate" classname="app.nook.CalendarVisualTest" time="3.485" />
+  <testcase name="inlineInboxThoughtSavesWithoutOrganizationAndReopensOffline" classname="app.nook.CaptureFlowTest" time="3.903" />
+  <testcase name="captureClarifyAndReopen" classname="app.nook.CaptureFlowTest" time="6.416" />
+  <testcase name="narrowLargeTextDestinationsRemainVisibleAndClickable" classname="app.nook.ClarifyLayoutTest" time="2.16" />
+  <testcase name="disconnected" classname="app.nook.ColdAccountSurfaceTest" time="0.07">
+    <skipped />
+  </testcase>
+  <testcase name="widget" classname="app.nook.ColdAccountSurfaceTest" time="0.038">
+    <skipped />
+  </testcase>
+  <testcase name="reminder" classname="app.nook.ColdAccountSurfaceTest" time="0.004">
+    <skipped />
+  </testcase>
+  <testcase name="shortcut" classname="app.nook.ColdAccountSurfaceTest" time="0.038">
+    <skipped />
+  </testcase>
+  <testcase name="prepare" classname="app.nook.ColdAccountSurfaceTest" time="0.032">
+    <skipped />
+  </testcase>
+  <testcase name="cleanup" classname="app.nook.ColdAccountSurfaceTest" time="0.068">
+    <skipped />
+  </testcase>
+  <testcase name="captureAndAgendaRowsExposeNamedButtonsWithoutMakingInformationalRowsActions" classname="app.nook.CustomActionSemanticsTest" time="2.062" />
+  <testcase name="createEditAndReopenDatedNoteOffline" classname="app.nook.DailyFlowTest" time="6.082" />
+  <testcase name="nativeAuthMergeUpdatesAndPermanentDeletionUseActualEmulatorRules" classname="app.nook.FirebaseTransportTest" time="0.006">
+    <skipped />
+  </testcase>
+  <testcase name="largeTextCaptureSavesLocallyWithoutOrganizationAtBothWidths" classname="app.nook.InboxLayoutTest" time="3.404" />
+  <testcase name="configuredShareStartupAutomaticallySyncsAndKeepsAccountControlsIsolated" classname="app.nook.NativeAccountFlowTest" time="0.043">
+    <skipped />
+  </testcase>
+  <testcase name="moreFormattingPreservesSelectedTextAcrossPopupFocus" classname="app.nook.NoteFlowTest" time="3.699" />
+  <testcase name="formatPreviewLinkAndReopenOffline" classname="app.nook.NoteFlowTest" time="4.596" />
+  <testcase name="largeTextKeepsToolbarBacklinksAndMarkdownAccessible" classname="app.nook.NoteLayoutTest" time="5.51" />
+  <testcase name="titleLinksPersistTheirTargetAcrossRenameOutboxAndReopen" classname="app.nook.NoteLinkPersistenceTest" time="0.291" />
+  <testcase name="readingFirstNoteHasBacklinksAndMenuSavesEditsOffline" classname="app.nook.NoteVisualTest" time="9.775" />
+  <testcase name="captureEditCompleteMoveSearchDeleteAndReopenUseDurableLocalRecords" classname="app.nook.OfflineLifecycleTest" time="8.268" />
+  <testcase name="guideDismissalSuppressionAndResetWorkWithRealLocalSettings" classname="app.nook.ParaLearningTest" time="2.875" />
+  <testcase name="invalidLocalEditsAndRemotePayloadsLeaveRecordsSearchAndOutboxIntact" classname="app.nook.PayloadBoundaryTest" time="0.08" />
+  <testcase name="taskRowsKeepOpeningAndCompletionSeparateAtLargeText" classname="app.nook.ProjectOverviewTest" time="2.618" />
+  <testcase name="summaryOpensOnlyLiveAccountNextActionsAtNormalAndLargeTextSizes" classname="app.nook.ProjectOverviewTest" time="2.169" />
+  <testcase name="projectLeadsWithOutcomeNextActionAndTasks" classname="app.nook.ProjectVisualTest" time="2.785" />
+  <testcase name="openingBacklinkSavesTheCurrentNoteDraft" classname="app.nook.RecordContextTest" time="2.418" />
+  <testcase name="linkedAreaWorkOpensAndNewTasksRetainProjectAndArea" classname="app.nook.RecordContextTest" time="5.909" />
+  <testcase name="editorRefreshesPristineDraftsPreservesDirtyDraftsAndSavesAreaContext" classname="app.nook.RecordContextTest" time="3.275" />
+  <testcase name="actualWorkerDeliversTaskAndSkipsEmptyInboxOffline" classname="app.nook.ReminderDeliveryTest" time="0.499" />
+  <testcase name="contextualIndexedSearchOverTwoThousandTasksReturnsTheExpectedResults" classname="app.nook.SearchPerformanceTest" time="5.155" />
+  <testcase name="openSearchRefreshesForContextRenameAndPermanentDeletion" classname="app.nook.SearchRefreshTest" time="2.176" />
+  <testcase name="sharedPhotoSavesOriginalWithoutRequiredCaption" classname="app.nook.ShareCaptureTest" time="2.033" />
+  <testcase name="shareUrlSavesToLocalInboxAndShortcutsAreRegistered" classname="app.nook.ShareCaptureTest" time="1.77" />
+  <testcase name="todayCompletionPersistsAndFutureDeadlineOpensFromComingUp" classname="app.nook.TodayFlowTest" time="2.379" />
+  <testcase name="largeTextActionsRemainSeparateAndReachableAtNarrowWidths" classname="app.nook.TodayLayoutTest" time="4.0" />
+  <testcase name="populatedTodayRendersScheduledWorkNextActionDeadlinesAndInbox" classname="app.nook.TodayVisualTest" time="2.247" />
+  <testcase name="focusDraftSurvivesRecreationAndSavesOffline" classname="app.nook.WeeklyReviewFlowTest" time="3.437" />
+  <testcase name="allFiveWidgetsRenderRealLocalRecords" classname="app.nook.WidgetRenderTest" time="5.855" />
+  <testcase name="credentialBarrierCancelsSyncWorkWithoutCancellingOtherWork" classname="app.nook.WorkerCancellationTest" time="0.061" />
+  <testcase name="repeatedChangesKeepOneQueuedSyncAndOnePeriodicRequest" classname="app.nook.WorkerCancellationTest" time="0.125" />
+</testsuite>

@@ -1,0 +1,80 @@
+const imgEllipse = "https://www.figma.com/api/mcp/asset/538dee7b-cbba-43ab-acc3-5b088d2f246b.svg";
+const imgEllipse1 = "https://www.figma.com/api/mcp/asset/77cab27e-68ea-48e1-9e10-5f2281350d0b.svg";
+
+export default function Component27ReminderSetup() {
+  return (
+    <div className="bg-[#171412] overflow-clip relative rounded-[24px] size-full" data-node-id="4:113" data-name="27 · Reminder Setup">
+      <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[21px] not-italic text-[#f5eee7] text-[12px] top-[16px] w-[44px]" data-node-id="4:114">
+        9:41
+      </p>
+      <div className="absolute left-[16px] size-[24px] top-[52px]" data-node-id="4:115" data-name="Ellipse">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse} />
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[25.2px] leading-[normal] left-[48px] not-italic text-[#f5eee7] text-[18px] top-[50px] tracking-[-0.8px] w-[100px]" data-node-id="4:116">
+        nook
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[42px] leading-[normal] left-[16px] not-italic text-[#f5eee7] text-[30px] top-[102px] tracking-[-0.8px] w-[343px]" data-node-id="4:117">
+        A gentle reminder
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18.2px] leading-[normal] left-[16px] not-italic text-[#cbbfb4] text-[13px] top-[145px] w-[343px]" data-node-id="4:118">{`Nook can remind you to empty the Inbox—only when there's something there.`}</p>
+      <div className="absolute bg-[#342d28] h-[118px] left-[16px] overflow-clip rounded-[20px] top-[198px] w-[343px]" data-node-id="4:119" data-name="Frame">
+        <div className="absolute left-[16px] size-[38px] top-[18px]" data-node-id="4:120" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18px] leading-[normal] left-[68px] not-italic text-[#cbbfb4] text-[11px] top-[16px] w-[120px]" data-node-id="4:121">
+          Nook
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[68px] not-italic text-[#f5eee7] text-[14px] top-[39px] w-[245px]" data-node-id="4:122">
+          7 things are waiting in Inbox.
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[68px] not-italic text-[#cbbfb4] text-[11px] top-[66px] w-[240px]" data-node-id="4:123">
+          A two-minute review is enough.
+        </p>
+        <div className="absolute bg-[#3270e6] h-[28px] left-[248px] overflow-clip rounded-[14px] top-[80px] w-[78px]" data-node-id="4:124" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[12px] text-white top-[6px] w-[54px]" data-node-id="4:125">
+            Process
+          </p>
+        </div>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18px] leading-[normal] left-[16px] not-italic text-[#9c9187] text-[12px] top-[356px] w-[180px]" data-node-id="4:126">
+        Suggested time
+      </p>
+      <div className="[word-break:break-word] absolute bg-[#221d1a] h-[58px] leading-[normal] left-[16px] not-italic overflow-clip rounded-[16px] top-[382px] w-[343px]" data-node-id="4:127" data-name="Frame">
+        <p className="absolute font-['Inter:Bold'] font-bold h-[18.2px] left-[16px] text-[#f5eee7] text-[13px] top-[11px] w-[180px]" data-node-id="4:128">
+          Every evening
+        </p>
+        <p className="absolute font-['Inter:Medium'] font-medium h-[18px] left-[262px] text-[#cbbfb4] text-[12px] top-[17px] w-[62px]" data-node-id="4:129">
+          8:00 PM
+        </p>
+      </div>
+      <div className="absolute bg-[#221d1a] h-[76px] left-[16px] overflow-clip rounded-[18px] top-[458px] w-[343px]" data-node-id="4:130" data-name="Frame">
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18.2px] leading-[normal] left-[16px] not-italic text-[#f5eee7] text-[13px] top-[14px] w-[160px]" data-node-id="4:131">
+          Inbox empty?
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[16px] not-italic text-[#cbbfb4] text-[11px] top-[39px] w-[180px]" data-node-id="4:132">{`Don't notify me.`}</p>
+        <div className="absolute bg-[#3fae9b] h-[28px] left-[276px] overflow-clip rounded-[14px] top-[24px] w-[50px]" data-node-id="4:133" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[12px] text-white top-[6px] w-[26px]" data-node-id="4:134">
+            On
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#3270e6] h-[48px] left-[16px] overflow-clip rounded-[24px] top-[580px] w-[343px]" data-node-id="4:135" data-name="Frame">
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[21px] leading-[normal] left-[171.5px] not-italic text-[15px] text-center text-white top-[14px] w-[343px]" data-node-id="4:136">
+          Allow notifications
+        </p>
+      </div>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18px] leading-[normal] left-[187.5px] not-italic text-[#cbbfb4] text-[12px] text-center top-[646px] w-[343px]" data-node-id="4:137">
+        Not now
+      </p>
+    </div>
+  );
+}
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

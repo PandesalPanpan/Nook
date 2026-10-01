@@ -1,0 +1,9 @@
+
+app.nook.CaptureFlowTest:.
+app.nook.InboxVisualTest:.
+
+Time: 13.614
+
+OK (2 tests)
+
+

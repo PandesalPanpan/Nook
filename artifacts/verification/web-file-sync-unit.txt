@@ -1,0 +1,16 @@
+
+> nook@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.2 Y:/Codes/PARA
+
+
+ Test Files  20 passed (20)
+      Tests  80 passed (80)
+   Start at  09:54:39
+   Duration  6.87s (import 40%, tests 31%, environment 22%, transform 7%)
+
+    Isolate  20 workers spawned · ~832ms startup each (spawn + environment, per file)
+             at least ~681ms faster with isolate: false — reuses workers across files instead of one per file
+

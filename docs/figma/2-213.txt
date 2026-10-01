@@ -1,0 +1,81 @@
+const imgEllipse = "https://www.figma.com/api/mcp/asset/c1766526-4bb5-426f-a409-a28ead3e77fb.svg";
+
+export default function Component04QuickCapture() {
+  return (
+    <div className="bg-[#171412] overflow-clip relative rounded-[24px] size-full" data-node-id="2:213" data-name="04 · Quick Capture">
+      <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[21px] not-italic text-[#f5eee7] text-[12px] top-[16px] w-[44px]" data-node-id="2:214">
+        9:41
+      </p>
+      <div className="absolute left-[16px] size-[24px] top-[52px]" data-node-id="2:215" data-name="Ellipse">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse} />
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[25.2px] leading-[normal] left-[48px] not-italic text-[#f5eee7] text-[18px] top-[50px] tracking-[-0.8px] w-[100px]" data-node-id="2:216">
+        nook
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[42px] leading-[normal] left-[16px] not-italic text-[#f5eee7] text-[30px] top-[102px] tracking-[-0.8px] w-[343px]" data-node-id="2:217">
+        Inbox
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18.2px] leading-[normal] left-[16px] not-italic text-[#cbbfb4] text-[13px] top-[145px] w-[343px]" data-node-id="2:218">
+        Tap once. Type. Leave.
+      </p>
+      <div className="absolute bg-[#221d1a] h-[58px] left-[16px] rounded-[16px] top-[188px] w-[343px]" data-node-id="2:219" data-name="Frame" />
+      <div className="absolute bg-[#221d1a] h-[58px] left-[16px] rounded-[16px] top-[262px] w-[343px]" data-node-id="2:220" data-name="Frame" />
+      <div className="absolute bg-[#221d1a] h-[58px] left-[16px] rounded-[16px] top-[336px] w-[343px]" data-node-id="2:221" data-name="Frame" />
+      <div className="absolute bg-[#221d1a] h-[58px] left-[16px] rounded-[16px] top-[410px] w-[343px]" data-node-id="2:222" data-name="Frame" />
+      <div className="absolute bg-[#100e0d] h-[812px] left-0 opacity-58 rounded-[24px] top-0 w-[375px]" data-node-id="2:223" data-name="Frame" />
+      <div className="absolute bg-[#342d28] h-[430px] left-0 overflow-clip rounded-[28px] top-[382px] w-[375px]" data-node-id="2:224" data-name="Frame">
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[28px] leading-[normal] left-[20px] not-italic text-[#f5eee7] text-[20px] top-[22px] tracking-[-0.8px] w-[220px]" data-node-id="2:225">
+          Quick capture
+        </p>
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[33.6px] leading-[normal] left-[345px] not-italic text-[#cbbfb4] text-[24px] text-center top-[18px] w-[30px]" data-node-id="2:226">
+          ×
+        </p>
+        <div className="absolute bg-[#221d1a] border border-[#453d37] border-solid h-[126px] left-[20px] overflow-clip rounded-[20px] top-[72px] w-[335px]" data-node-id="2:227" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[22.4px] leading-[normal] left-[15px] not-italic text-[#f5eee7] text-[16px] top-[17px] w-[303px]" data-node-id="2:228">
+            I should research ESP32 deep sleep for our project
+          </p>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[20px] not-italic text-[#9c9187] text-[11px] top-[210px] w-[220px]" data-node-id="2:229">
+          Saved to Inbox by default
+        </p>
+        <div className="absolute bg-[#221d1a] h-[28px] left-[20px] overflow-clip rounded-[14px] top-[244px] w-[70px]" data-node-id="2:230" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[46px]" data-node-id="2:231">
+            Task
+          </p>
+        </div>
+        <div className="absolute bg-[#221d1a] h-[28px] left-[98px] overflow-clip rounded-[14px] top-[244px] w-[74px]" data-node-id="2:232" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[50px]" data-node-id="2:233">
+            Photo
+          </p>
+        </div>
+        <div className="absolute bg-[#221d1a] h-[28px] left-[180px] overflow-clip rounded-[14px] top-[244px] w-[66px]" data-node-id="2:234" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[42px]" data-node-id="2:235">
+            Link
+          </p>
+        </div>
+        <div className="absolute bg-[#221d1a] h-[28px] left-[254px] overflow-clip rounded-[14px] top-[244px] w-[86px]" data-node-id="2:236" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[62px]" data-node-id="2:237">
+            Remind
+          </p>
+        </div>
+        <div className="absolute bg-[#3270e6] h-[48px] left-[20px] overflow-clip rounded-[24px] top-[314px] w-[335px]" data-node-id="2:238" data-name="Frame">
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[21px] leading-[normal] left-[167.5px] not-italic text-[15px] text-center text-white top-[14px] w-[335px]" data-node-id="2:239">
+            Save
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

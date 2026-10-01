@@ -1,0 +1,5 @@
+{
+  "id":"shared-task", "accountId":"alice", "kind":"task", "schemaVersion":1,
+  "createdAt":1, "updatedAt":2, "clientId":"web", "deleted":false, "archived":false,
+  "data":{"title":"Prepare the review","completed":false,"doDate":"2026-09-30","deadline":"2026-10-02","projectId":"shared-project","parentTaskId":"parent-task"}
+}

@@ -1,0 +1,67 @@
+const imgEllipse = "https://www.figma.com/api/mcp/asset/b3891df9-54ca-4ea2-97b7-b8cf2cf367bc.svg";
+const imgEllipse1 = "https://www.figma.com/api/mcp/asset/91f92034-70f0-4998-8dcf-e4fd787d47d3.svg";
+const imgEllipse2 = "https://www.figma.com/api/mcp/asset/ef8c61f6-ce68-42c1-8070-228bd6251fab.svg";
+
+export default function Component01Welcome() {
+  return (
+    <div className="bg-[#171412] overflow-clip relative rounded-[24px] size-full" data-node-id="2:94" data-name="01 · Welcome">
+      <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[21px] not-italic text-[#f5eee7] text-[12px] top-[16px] w-[44px]" data-node-id="2:95">
+        9:41
+      </p>
+      <div className="absolute left-[16px] size-[24px] top-[52px]" data-node-id="2:96" data-name="Ellipse">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse} />
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[25.2px] leading-[normal] left-[48px] not-italic text-[#f5eee7] text-[18px] top-[50px] tracking-[-0.8px] w-[100px]" data-node-id="2:97">
+        nook
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[40.6px] leading-[normal] left-[24px] not-italic text-[#f5eee7] text-[29px] top-[175px] tracking-[-0.8px] w-[327px]" data-node-id="2:107">
+        Everything on your mind has somewhere to belong.
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[19.6px] leading-[normal] left-[24px] not-italic text-[#cbbfb4] text-[14px] top-[285px] w-[327px]" data-node-id="2:109">
+        Capture first. Nook helps you clarify, connect and act later—without slowing you down.
+      </p>
+      <div className="absolute bg-[#221d1a] h-[70px] left-[24px] overflow-clip rounded-[18px] top-[350px] w-[327px]" data-node-id="2:110" data-name="Frame">
+        <div className="absolute left-[16px] size-[36px] top-[17px]" data-node-id="2:111" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[64px] not-italic text-[#f5eee7] text-[14px] top-[12px] w-[220px]" data-node-id="2:112">
+          Capture in seconds
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[64px] not-italic text-[#cbbfb4] text-[11px] top-[36px] w-[230px]" data-node-id="2:113">
+          Text · tasks · links · screenshots
+        </p>
+      </div>
+      <div className="absolute bg-[#221d1a] h-[70px] left-[24px] overflow-clip rounded-[18px] top-[432px] w-[327px]" data-node-id="2:114" data-name="Frame">
+        <div className="absolute left-[16px] size-[36px] top-[17px]" data-node-id="2:115" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse2} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[64px] not-italic text-[#f5eee7] text-[14px] top-[12px] w-[220px]" data-node-id="2:116">
+          Organize when ready
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[64px] not-italic text-[#cbbfb4] text-[11px] top-[36px] w-[230px]" data-node-id="2:117">
+          Projects · Areas · Resources
+        </p>
+      </div>
+      <div className="absolute bg-[#3270e6] h-[48px] left-[24px] overflow-clip rounded-[24px] top-[548px] w-[327px]" data-node-id="2:118" data-name="Frame">
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[21px] leading-[normal] left-[163.5px] not-italic text-[15px] text-center text-white top-[14px] w-[327px]" data-node-id="2:119">
+          Set up my Nook
+        </p>
+      </div>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[187.5px] not-italic text-[#9c9187] text-[11px] text-center top-[610px] w-[327px]" data-node-id="2:120">
+        Your data stays usable offline.
+      </p>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

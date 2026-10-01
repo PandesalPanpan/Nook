@@ -1,0 +1,14 @@
+<resources>
+    <style name="Theme.Nook" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">#171412</item>
+        <item name="android:colorAccent">#3270e6</item>
+    </style>
+    <style name="Theme.Nook.Capture" parent="Theme.Nook">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimAmount">0.55</item>
+    </style>
+</resources>

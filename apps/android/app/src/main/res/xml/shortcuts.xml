@@ -1,0 +1,11 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut android:shortcutId="thought" android:enabled="true" android:icon="@drawable/ic_capture" android:shortcutShortLabel="@string/shortcut_thought">
+        <intent android:action="app.nook.CAPTURE" android:targetPackage="app.nook" android:targetClass="app.nook.integration.CaptureActivity"><extra android:name="captureType" android:value="text" /></intent>
+    </shortcut>
+    <shortcut android:shortcutId="task" android:enabled="true" android:icon="@drawable/ic_capture" android:shortcutShortLabel="@string/shortcut_task">
+        <intent android:action="app.nook.CAPTURE" android:targetPackage="app.nook" android:targetClass="app.nook.integration.CaptureActivity"><extra android:name="captureType" android:value="task" /></intent>
+    </shortcut>
+    <shortcut android:shortcutId="photo" android:enabled="true" android:icon="@drawable/ic_capture" android:shortcutShortLabel="@string/shortcut_photo">
+        <intent android:action="app.nook.CAPTURE" android:targetPackage="app.nook" android:targetClass="app.nook.integration.CaptureActivity"><extra android:name="captureType" android:value="photo" /></intent>
+    </shortcut>
+</shortcuts>

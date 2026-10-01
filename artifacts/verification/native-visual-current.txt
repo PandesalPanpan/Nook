@@ -1,0 +1,12 @@
+
+app.nook.CaptureFlowTest:.
+app.nook.TodayVisualTest:.
+app.nook.ProjectVisualTest:.
+app.nook.NoteVisualTest:.
+app.nook.CalendarVisualTest:.
+
+Time: 28.547
+
+OK (5 tests)
+
+

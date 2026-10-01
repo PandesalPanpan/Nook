@@ -1,0 +1,26 @@
+import {expect,test} from '@playwright/test';
+test('PARA guide stays optional and contextual dismissals persist offline with suppression and reset',async({page,context})=>{
+  await page.setViewportSize({width:1440,height:900});await page.goto('/');
+  await page.getByRole('button',{name:'How Nook organizes'}).click();
+  await expect(page.getByRole('dialog')).toContainText('Outcomes with a finish line');
+  const geometry=await page.locator('.para-guide .para-place img').evaluateAll(images=>images.map(img=>({width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height,loaded:(img as HTMLImageElement).naturalWidth>0})));
+  expect(geometry).toEqual(Array.from({length:4},()=>({width:42,height:42,loaded:true})));
+  await page.locator('.para-guide').screenshot({path:'artifacts/visual/web-para-guide.png'});
+  await page.getByRole('button',{name:'Continue',exact:true}).click();
+  await page.getByRole('button',{name:'Use Nook without an account'}).click();
+  await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  await page.getByRole('button',{name:'Quick capture',exact:true}).click();await page.getByRole('textbox',{name:'Thought',exact:true}).fill('Unsorted offline idea');await page.getByRole('button',{name:'Save',exact:true}).click();
+  await page.getByRole('button',{name:'Organize',exact:true}).click();
+  await page.getByRole('button',{name:'Learn more',exact:true}).click();await page.getByRole('button',{name:'Close PARA guide'}).click();
+  await expect(page.getByRole('heading',{name:'Unsorted offline idea',exact:true,level:2})).toBeVisible();
+  await page.getByRole('button',{name:'Got it',exact:true}).click();await expect(page.getByRole('region',{name:'PARA tip'})).toHaveCount(0);
+  await page.reload();await page.getByRole('button',{name:'Inbox',exact:true}).click();await page.getByRole('button',{name:/THOUGHT Unsorted offline idea/}).click();
+  await expect(page.getByRole('button',{name:'Got it',exact:true})).toHaveCount(0);
+  await page.getByRole('button',{name:'Areas',exact:true}).click();await expect(page.getByRole('region',{name:'PARA tip'})).toContainText('Areas don’t have finish lines.');
+  await page.locator('.para-tip').screenshot({path:'artifacts/visual/web-para-tip.png'});
+  await page.getByRole('button',{name:'Settings',exact:true}).click();await page.getByRole('checkbox',{name:'Show contextual PARA tips'}).uncheck();
+  await page.getByRole('button',{name:'Areas',exact:true}).click();await expect(page.getByRole('region',{name:'PARA tip'})).toHaveCount(0);
+  await page.reload();await page.getByRole('button',{name:'Settings',exact:true}).click();await expect(page.getByRole('checkbox',{name:'Show contextual PARA tips'})).not.toBeChecked();
+  await page.getByRole('button',{name:'Reset dismissed tips'}).click();await page.getByRole('checkbox',{name:'Show contextual PARA tips'}).check();
+  await page.getByRole('button',{name:'Inbox',exact:true}).click();await page.getByRole('button',{name:/THOUGHT Unsorted offline idea/}).click();await expect(page.getByRole('button',{name:'Got it',exact:true})).toBeVisible();
+});

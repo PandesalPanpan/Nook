@@ -1,0 +1,123 @@
+const imgEllipse = "https://www.figma.com/api/mcp/asset/1fc0d71c-ee78-414a-beb2-34e61e56ae1e.svg";
+const imgEllipse1 = "https://www.figma.com/api/mcp/asset/1715dc5e-714d-4cee-b754-8ca83c41b7b7.svg";
+const imgEllipse2 = "https://www.figma.com/api/mcp/asset/d2198223-3d59-4861-93fc-8d39cd699f4d.svg";
+
+export default function Component06Projects() {
+  return (
+    <div className="bg-[#171412] overflow-clip relative rounded-[24px] size-full" data-node-id="2:281" data-name="06 · Projects">
+      <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[21px] not-italic text-[#f5eee7] text-[12px] top-[16px] w-[44px]" data-node-id="2:282">
+        9:41
+      </p>
+      <div className="absolute left-[16px] size-[24px] top-[52px]" data-node-id="2:283" data-name="Ellipse">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse} />
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[25.2px] leading-[normal] left-[48px] not-italic text-[#f5eee7] text-[18px] top-[50px] tracking-[-0.8px] w-[100px]" data-node-id="2:284">
+        nook
+      </p>
+      <div className="absolute bg-[#342d28] h-[28px] left-[282px] overflow-clip rounded-[14px] top-[50px] w-[76px]" data-node-id="2:285" data-name="Frame">
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#cbbfb4] text-[12px] top-[6px] w-[52px]" data-node-id="2:286">
+          + New
+        </p>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[42px] leading-[normal] left-[16px] not-italic text-[#f5eee7] text-[30px] top-[102px] tracking-[-0.8px] w-[343px]" data-node-id="2:287">
+        Projects
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18.2px] leading-[normal] left-[16px] not-italic text-[#cbbfb4] text-[13px] top-[145px] w-[343px]" data-node-id="2:288">
+        Active outcomes with finish lines.
+      </p>
+      <div className="absolute bg-[#221d1a] h-[132px] left-[16px] overflow-clip rounded-[20px] top-[188px] w-[343px]" data-node-id="2:289" data-name="Frame">
+        <div className="absolute bg-[#ffce00] h-[28px] left-[16px] overflow-clip rounded-[14px] top-[14px] w-[78px]" data-node-id="2:290" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#171412] text-[12px] top-[6px] w-[54px]" data-node-id="2:291">
+            PROJECT
+          </p>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[22.4px] leading-[normal] left-[16px] not-italic text-[#f5eee7] text-[16px] top-[48px] w-[255px]" data-node-id="2:292">
+          Classroom Management System
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[16px] not-italic text-[#cbbfb4] text-[11px] top-[76px] w-[150px]" data-node-id="2:293">
+          Target · Dec 18
+        </p>
+        <p className="-translate-x-full [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18px] leading-[normal] left-[319px] not-italic text-[#ff7e1d] text-[11px] text-right top-[76px] w-[45px]" data-node-id="2:294">
+          64%
+        </p>
+        <div className="absolute bg-[#342d28] h-[8px] left-[16px] rounded-[4px] top-[106px] w-[311px]" data-node-id="2:295" data-name="Frame" />
+        <div className="absolute bg-[#ff7e1d] h-[8px] left-[16px] rounded-[4px] top-[106px] w-[199.04px]" data-node-id="2:296" data-name="Frame" />
+      </div>
+      <div className="absolute bg-[#221d1a] h-[132px] left-[16px] overflow-clip rounded-[20px] top-[336px] w-[343px]" data-node-id="2:297" data-name="Frame">
+        <div className="absolute bg-[#ffce00] h-[28px] left-[16px] overflow-clip rounded-[14px] top-[14px] w-[78px]" data-node-id="2:298" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#171412] text-[12px] top-[6px] w-[54px]" data-node-id="2:299">
+            PROJECT
+          </p>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[22.4px] leading-[normal] left-[16px] not-italic text-[#f5eee7] text-[16px] top-[48px] w-[255px]" data-node-id="2:300">
+          Embedded Systems Activity 3
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[16px] not-italic text-[#cbbfb4] text-[11px] top-[76px] w-[150px]" data-node-id="2:301">
+          Target · Oct 2
+        </p>
+        <p className="-translate-x-full [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18px] leading-[normal] left-[319px] not-italic text-[#3270e6] text-[11px] text-right top-[76px] w-[45px]" data-node-id="2:302">
+          82%
+        </p>
+        <div className="absolute bg-[#342d28] h-[8px] left-[16px] rounded-[4px] top-[106px] w-[311px]" data-node-id="2:303" data-name="Frame" />
+        <div className="absolute bg-[#3270e6] h-[8px] left-[16px] rounded-[4px] top-[106px] w-[255.02px]" data-node-id="2:304" data-name="Frame" />
+      </div>
+      <div className="absolute bg-[#221d1a] h-[132px] left-[16px] overflow-clip rounded-[20px] top-[484px] w-[343px]" data-node-id="2:305" data-name="Frame">
+        <div className="absolute bg-[#ffce00] h-[28px] left-[16px] overflow-clip rounded-[14px] top-[14px] w-[78px]" data-node-id="2:306" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#171412] text-[12px] top-[6px] w-[54px]" data-node-id="2:307">
+            PROJECT
+          </p>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[22.4px] leading-[normal] left-[16px] not-italic text-[#f5eee7] text-[16px] top-[48px] w-[255px]" data-node-id="2:308">
+          Portfolio redesign
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[16px] not-italic text-[#cbbfb4] text-[11px] top-[76px] w-[150px]" data-node-id="2:309">
+          Target · Oct 12
+        </p>
+        <p className="-translate-x-full [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18px] leading-[normal] left-[319px] not-italic text-[#3fae9b] text-[11px] text-right top-[76px] w-[45px]" data-node-id="2:310">
+          35%
+        </p>
+        <div className="absolute bg-[#342d28] h-[8px] left-[16px] rounded-[4px] top-[106px] w-[311px]" data-node-id="2:311" data-name="Frame" />
+        <div className="absolute bg-[#3fae9b] h-[8px] left-[16px] rounded-[4px] top-[106px] w-[108.85px]" data-node-id="2:312" data-name="Frame" />
+      </div>
+      <div className="absolute bg-[#221d1a] h-[72px] left-0 overflow-clip top-[740px] w-[375px]" data-node-id="2:313" data-name="Frame">
+        <div className="absolute bg-[#453d37] h-px left-0 top-0 w-[375px]" data-node-id="2:314" data-name="Rectangle" />
+        <div className="absolute left-[34px] size-[18px] top-[10px]" data-node-id="2:315" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[43px] not-italic text-[#9c9187] text-[10px] text-center top-[34px] w-[72px]" data-node-id="2:316">
+          Today
+        </p>
+        <div className="absolute left-[126px] size-[18px] top-[10px]" data-node-id="2:317" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[135px] not-italic text-[#9c9187] text-[10px] text-center top-[34px] w-[72px]" data-node-id="2:318">
+          Inbox
+        </p>
+        <div className="absolute left-[218px] size-[18px] top-[10px]" data-node-id="2:319" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse2} />
+        </div>
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18px] leading-[normal] left-[227px] not-italic text-[#f5eee7] text-[10px] text-center top-[34px] w-[72px]" data-node-id="2:320">
+          Projects
+        </p>
+        <div className="absolute left-[310px] size-[18px] top-[10px]" data-node-id="2:321" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[319px] not-italic text-[#9c9187] text-[10px] text-center top-[34px] w-[72px]" data-node-id="2:322">
+          Library
+        </p>
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

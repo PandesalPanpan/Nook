@@ -1,0 +1,13 @@
+# PARA context
+
+Projects can belong to an Area. Tasks, Notes and Resources can reference a Project and/or Area; Notes can also belong to a Resource collection. Resource collections retain their description, optional URL, linked notes and original attachments.
+
+Resource projectId/areaId fields are optional additions to the V1 JSON payload. Existing records remain valid. Room/Dexie store payload JSON, so this addition needs no table migration or database reset. Backups retain the relationships. Both applications and the included Firestore rules must be updated together before syncing these fields; older strict V1 readers will reject fields they do not recognize.
+
+An explicitly assigned Area wins. When a record has no explicit Area, Area search and related-work lists derive it from its Project. A legacy task without its own Project/Area can inherit through its parent task chain. The first explicit Area or Project along that chain wins; a missing explicit Project does not fall through to a different parent context. Resolution uses only undeleted Projects and Tasks in the same account. Traversal is iterative and stops on repeated IDs, wrong parent kinds or missing parents. Search and editor lists build one account-filtered lookup map and reuse it for their results. It never rewrites a child or revives deleted data. A missing/deleted Project leaves the derived Area unavailable. Existing explicit associations remain explicit when their Project changes.
+
+Context changes save locally and enqueue the ordinary durable record operation. Cloud writes use the owner namespace and normal conflict/tombstone policy. Resources validate optional reference ID syntax in web, Android and Firestore rules.
+
+Parent-only legacy subtasks, deleted parents, cycles and account boundaries have automated coverage. Related-work navigation and draft-preservation flows, source-based Project/Note comparisons and the 2,002-record contextual-search sample have been exercised. ACCEPTANCE.md tracks the final gate; these samples do not claim unbounded-account performance.
+
+Project-filtered local search also derives context through legacy parent-only Tasks. The resolver walks same-account, live Task parents with cycle detection; an explicit non-empty projectId stops inheritance, including an unavailable reference. Search matches derived IDs only against live Projects in the current account. Project records match their own IDs directly. No inherited fields are written back to records. Web queries load Project/Task parents through the account-kind compound index; both platforms build the parent lookup once per search.

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.local
+local.properties
+.gradle/
+build/
+google-services.json
+nook-firebase.json
+*.log
+
+test-results/
+playwright-report/

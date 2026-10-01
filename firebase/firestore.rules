@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owner(uid) { return request.auth != null && request.auth.uid == uid; }
+    function payload(kind, data) {
+      let allowed = {
+        'capture':['body','captureType','attachmentIds'],
+        'note':['title','body','projectId','areaId','resourceId','attachmentIds'],
+        'task':['title','completed','doDate','deadline','reminderId','recurrenceId','projectId','areaId','parentTaskId'],
+        'project':['title','outcome','targetDate','progress','areaId','nextActionId'],
+        'area':['title','responsibility','standards'],
+        'resource':['title','description','url','projectId','areaId'],
+        'attachment':['filename','mimeType','size','ownerId','storagePath'],
+        'dailyNote':['date','body','relatedIds'],
+        'reminder':['targetId','scheduledAt','type','skipIfInboxEmpty'],
+        'recurrence':['frequency','interval','anchorDate'],
+        'noteLink':['sourceId','targetId'],
+        'settings':['tipsEnabled','dismissedTips','dailyNotesEnabled','inboxReviewEnabled'],
+        'profile':['displayName']
+      };
+      let required = {
+        'capture':['body','captureType','attachmentIds'], 'note':['title','body','attachmentIds'],
+        'task':['title','completed'], 'project':['title','outcome','progress'],
+        'area':['title','responsibility','standards'], 'resource':['title','description'],
+        'attachment':['filename','mimeType','size','ownerId'], 'dailyNote':['date','body','relatedIds'],
+        'reminder':['scheduledAt','type','skipIfInboxEmpty'], 'recurrence':['frequency','interval','anchorDate'],
+        'noteLink':['sourceId','targetId'], 'settings':['tipsEnabled','dismissedTips','dailyNotesEnabled','inboxReviewEnabled'],
+        'profile':['displayName']
+      };
+      return data.keys().hasOnly(allowed[kind]) && data.keys().hasAll(required[kind])
+        && (kind != 'resource' || ((!('projectId' in data) || data.projectId is string && data.projectId.matches('^[A-Za-z0-9:_-]{1,128}$'))
+          && (!('areaId' in data) || data.areaId is string && data.areaId.matches('^[A-Za-z0-9:_-]{1,128}$'))));
+    }
+    function valid(uid, id) {
+      let d = request.resource.data;
+      return d.keys().hasAll(['id','accountId','kind','data','schemaVersion','createdAt','updatedAt','clientId','deleted','archived'])
+        && d.keys().hasOnly(['id','accountId','kind','data','schemaVersion','createdAt','updatedAt','clientId','deleted','archived'])
+        && d.id == id && d.accountId == uid && d.schemaVersion == 1
+        && d.kind in ['capture','note','task','project','area','resource','attachment','dailyNote','reminder','recurrence','noteLink','settings','profile']
+        && d.data is map && payload(d.kind, d.data) && d.clientId is string && d.clientId.size() > 0 && d.clientId.size() <= 128
+        && d.createdAt is int && d.createdAt >= 0 && d.updatedAt is int && d.updatedAt >= d.createdAt
+        && d.deleted is bool && d.archived is bool;
+    }
+    match /users/{uid}/records/{id} {
+      allow read: if owner(uid);
+      allow create: if owner(uid) && valid(uid, id);
+      allow update: if owner(uid) && valid(uid, id)
+        && request.resource.data.kind == resource.data.kind
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (!resource.data.deleted || request.resource.data.deleted)
+        && (request.resource.data.deleted && !resource.data.deleted
+          || request.resource.data.updatedAt > resource.data.updatedAt
+          || request.resource.data.updatedAt == resource.data.updatedAt && request.resource.data.clientId >= resource.data.clientId);
+      allow delete: if false;
+    }
+  }
+}

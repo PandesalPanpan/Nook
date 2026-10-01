@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="app.nook.SystemOriginalInputTest" tests="4" failures="0" errors="0" skipped="0" time="19.574" timestamp="2026-10-01T05:01:10" hostname="localhost">
+  <properties>
+    <property name="device" value="Iza_Pixel_8_API_36(AVD) - 16" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="systemDocumentSelectionAttachesExactOriginalAndReopensOffline" classname="app.nook.SystemOriginalInputTest" time="8.279" />
+  <testcase name="registeredPhotoShortcutTakesCameraOriginalWithoutCaptionOffline" classname="app.nook.SystemOriginalInputTest" time="4.672" />
+  <testcase name="sharedPhotoSavesOriginalWithoutRequiredCaption" classname="app.nook.ShareCaptureTest" time="2.433" />
+  <testcase name="shareUrlSavesToLocalInboxAndShortcutsAreRegistered" classname="app.nook.ShareCaptureTest" time="2.596" />
+</testsuite>

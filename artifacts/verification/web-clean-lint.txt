@@ -1,0 +1,4 @@
+
+> nook@0.1.0 lint
+> eslint apps/web/src packages/schemas/src firebase/*.ts *.ts
+

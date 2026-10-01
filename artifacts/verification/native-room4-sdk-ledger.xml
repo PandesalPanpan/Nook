@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="app.nook.FirebaseTransportTest" tests="1" failures="0" errors="0" skipped="0" time="25.289" timestamp="2026-09-30T16:49:06" hostname="localhost">
+  <properties>
+    <property name="device" value="Iza_Pixel_8_API_36(AVD) - 16" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="nativeAuthMergeUpdatesAndPermanentDeletionUseActualEmulatorRules" classname="app.nook.FirebaseTransportTest" time="21.451" />
+</testsuite>

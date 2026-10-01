@@ -1,0 +1,13 @@
+{
+  "nativeJvmPerVariant": 88,
+  "sha256": "3D7D4279C6A878049A62272B92F1119017CEA0BAB8FC74667EE5B413D2ED6B99",
+  "date": "2026-10-01",
+  "nativeDeviceSkipped": 8,
+  "webOfflineBrowser": 14,
+  "apk": "artifacts/apk/nook-v1-debug.apk",
+  "webUnit": 80,
+  "firebaseRuleSdk": 9,
+  "nativeDeviceExecuted": 49,
+  "bytes": 23372629,
+  "configuredBrowser": 2
+}

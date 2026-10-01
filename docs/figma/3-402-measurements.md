@@ -1,0 +1,17 @@
+# Desktop Note source and implementation
+
+Inspected current Figma AtvThX3LNHp8kP1iItDB5N / 3:402 using get_design_context and its screenshot on 2026-10-01. Existing reference code is in 3-402.txt.
+
+- Source frame: 1440 x 900; sidebar 248 px, workspace starts at x296 with 48 px inset. Quick capture: x1050, 330 x 52.
+- Note main surface: x296/y132, 760 x 708, radius20; padding34 horizontal and30 top. Backlinks x1080/y132,300 x334; Details x1080/y490,300 x350; column gap24.
+- Page title32 px and inner title30 px, Inter Bold; context13 px; orange context pill12 px and28 px high. Reader paragraph16 px, H2 20 px, source list15 px secondary; reference pill560 x46, radius14,13 px bold.
+- Toolbar: elevated surface, radius16, six compact B/I/List/Check/Link note/Attach actions. Original source buttons are96 x28; implementation retains96 px widths and increases their minimum height to32 px (44 at narrow widths), with wrapping. Edit/Preview, remaining formats and explicit local record actions are reachable below it.
+- Backlinks have17 px heading and11 px count. Stable ordered, actual navigation cards have12 px titles,10 px supporting text and56 px minimum height. Details show actual created/updated/location and local-save status, with Project/Resource/Area fields behind Organize note.
+
+NoteRecord.tsx replaces the generic note form. Saved nonempty notes initially render; empty notes open for editing. Optional title remains directly editable. Paragraphs render through the existing safe Markdown/GFM/wiki pipeline. Only a final standalone resolved wiki paragraph becomes the reference pill; code/list/quote/escaped/emphasized/inline/unresolved forms remain ordinary Markdown. Stored and exported source is unchanged by presentation.
+
+AttachmentList.tsx shares the original picker/busy/errors between the toolbar and original-file list. The production browser test opens the real file chooser through Attach, stores original bytes offline and downloads them unchanged. Selection-aware linking preserves a selected range across keyboard focus movement and picker focus. Escape returns focus to the opener in preview or selected text in editing. Unchanged related navigation avoids writes; dirty drafts persist quietly first. Archive saves drafts before archiving/restoration, retaining original attachments.
+
+Original static assets remain non-empty local files under apps/web/public/figma/3-402-*.svg, dimensions28 brand,18 navigation,32 local status and24 quick capture. The production browser test verifies the exact callsite source URLs, natural-image loading and rendered geometry for all nine visible markers. Auth-free local status describes local-only state rather than pretending it has synced.
+
+Current screenshots: artifacts/visual/web-note-populated.png and web-note-1024.png, web-note-390.png, web-note-320.png. The normal screenshot and320 px full-page screenshot were inspected. The normal source card and column widths match exactly; content flows instead of clipping long Markdown. Narrow title inputs horizontally scroll while the page heading wraps the full title. Actual action/input/disclosure horizontal containment passes320/390/1024; this does not establish a complete zoom or screen-reader traversal audit. Additional formats, save/archive/delete actions and metadata disclosure remain visible/reachable adaptations for complete editing. Optional contextual PARA learning below the editor remains an existing product addition.

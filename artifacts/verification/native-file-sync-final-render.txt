@@ -1,0 +1,8 @@
+
+app.nook.AccountSyncStatusTest:..
+
+Time: 5.501
+
+OK (2 tests)
+
+

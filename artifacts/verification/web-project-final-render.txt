@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 apps\web\e2e\project.spec.ts:5:1 › desktop Project source workspace and local task controls persist offline (2.1s)
+
+  1 passed (3.6s)

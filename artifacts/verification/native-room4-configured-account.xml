@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="app.nook.NativeAccountFlowTest" tests="1" failures="0" errors="0" skipped="0" time="96.125" timestamp="2026-09-30T16:52:18" hostname="localhost">
+  <properties>
+    <property name="device" value="Iza_Pixel_8_API_36(AVD) - 16" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="configuredShareStartupAutomaticallySyncsAndKeepsAccountControlsIsolated" classname="app.nook.NativeAccountFlowTest" time="91.768" />
+</testsuite>

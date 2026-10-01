@@ -1,0 +1,174 @@
+i  emulators: Starting emulators: auth, firestore, storage
+i  emulators: Detected demo project ID "demo-nook", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail.
+i  firestore: Firestore Emulator logging to firestore-debug.log
++  firestore: Firestore Emulator was started in standard edition.
++  firestore: Firestore Emulator UI websocket is running on 9150.
+i  Running script: powershell -NoProfile -ExecutionPolicy Bypass -File artifacts/verification/test-file-sync-web.ps1
+
+ RUN  v5.0.2 Y:/Codes/PARA
+
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  09:48:12
+   Duration  10.60s (tests 62%, import 36%, transform 2%)
+
+
+> nook@0.1.0 build
+> npm run build --workspace @nook/web
+
+
+> @nook/web@0.1.0 build
+> vite build
+
+vite v8.3.1 building client environment for production...
+transforming...
+✓ 424 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/registerSW.js                                          0.13 kB
+dist/manifest.webmanifest                                   0.30 kB
+dist/index.html                                             0.61 kB │ gzip:   0.38 kB
+dist/assets/inter-vietnamese-400-normal-DMkecbls.woff2      4.97 kB
+dist/assets/inter-vietnamese-700-normal-DlLaEgI2.woff2      5.10 kB
+dist/assets/inter-vietnamese-500-normal-DOriooB6.woff2      5.11 kB
+dist/assets/inter-greek-ext-400-normal-DGGRlc-M.woff2       5.26 kB
+dist/assets/inter-greek-ext-500-normal-C4iEst2y.woff2       5.42 kB
+dist/assets/inter-greek-ext-700-normal-qfdV9bQt.woff2       5.44 kB
+dist/assets/inter-vietnamese-400-normal-Bbgyi5SW.woff       6.50 kB
+dist/assets/inter-vietnamese-500-normal-mJboJaSs.woff       6.59 kB
+dist/assets/inter-vietnamese-700-normal-BZaoP0fm.woff       6.63 kB
+dist/assets/inter-greek-ext-400-normal-KugGGMne.woff        7.06 kB
+dist/assets/inter-greek-ext-500-normal-2j5mBUwD.woff        7.19 kB
+dist/assets/inter-greek-ext-700-normal-BoQ6DsYi.woff        7.21 kB
+dist/assets/inter-cyrillic-400-normal-obahsSVq.woff2        7.71 kB
+dist/assets/inter-greek-400-normal-B4URO6DV.woff2           7.77 kB
+dist/assets/inter-cyrillic-500-normal-BasfLYem.woff2        7.90 kB
+dist/assets/inter-cyrillic-700-normal-CjBOestx.woff2        7.90 kB
+dist/assets/inter-greek-500-normal-BIZE56-Y.woff2           7.92 kB
+dist/assets/inter-greek-700-normal-C3JjAnD8.woff2           7.92 kB
+dist/assets/inter-cyrillic-400-normal-HOLc17fK.woff         9.78 kB
+dist/assets/inter-cyrillic-700-normal-DrXBdSj3.woff         9.91 kB
+dist/assets/inter-greek-400-normal-q2sYcFCs.woff            9.92 kB
+dist/assets/inter-cyrillic-500-normal-CxZf_p3X.woff         9.94 kB
+dist/assets/inter-greek-500-normal-Xzm54t5V.woff            9.98 kB
+dist/assets/inter-greek-700-normal-BUv2fZ6O.woff            9.98 kB
+dist/assets/inter-cyrillic-ext-400-normal-BQZuk6qB.woff2   10.23 kB
+dist/assets/inter-cyrillic-ext-500-normal-B0yAr1jD.woff2   10.43 kB
+dist/assets/inter-cyrillic-ext-700-normal-BjwYoWNd.woff2   10.49 kB
+dist/assets/inter-cyrillic-ext-400-normal-DQukG94-.woff    13.33 kB
+dist/assets/inter-cyrillic-ext-700-normal-LO58E6JB.woff    13.40 kB
+dist/assets/inter-cyrillic-ext-500-normal-BmqWE9Dz.woff    13.45 kB
+dist/assets/inter-latin-400-normal-C38fXH4l.woff2          23.66 kB
+dist/assets/inter-latin-500-normal-Cerq10X2.woff2          24.27 kB
+dist/assets/inter-latin-700-normal-Yt3aPRUw.woff2          24.35 kB
+dist/assets/inter-latin-400-normal-CyCys3Eg.woff           30.69 kB
+dist/assets/inter-latin-500-normal-BL9OpVg8.woff           31.28 kB
+dist/assets/inter-latin-700-normal-BLAVimhd.woff           31.32 kB
+dist/assets/inter-latin-ext-400-normal-C1nco2VV.woff2      35.00 kB
+dist/assets/inter-latin-ext-500-normal-CV4jyFjo.woff2      36.02 kB
+dist/assets/inter-latin-ext-700-normal-Ca8adRJv.woff2      36.24 kB
+dist/assets/inter-latin-ext-400-normal-77YHD8bZ.woff       47.56 kB
+dist/assets/inter-latin-ext-500-normal-BxGbmqWO.woff       48.49 kB
+dist/assets/inter-latin-ext-700-normal-TidjK2hL.woff       48.63 kB
+dist/assets/index-CNKtPrk2.css                             28.61 kB │ gzip:   6.12 kB
+dist/assets/firebase-auth-CM2NA4X-.js                       0.41 kB │ gzip:   0.27 kB
+dist/assets/index.esm-BY1OJsLt.js                         106.35 kB │ gzip:  31.98 kB
+dist/assets/firebase-L0acWBog.js                          464.97 kB │ gzip: 137.64 kB
+dist/assets/index-KQ8QGHx8.js                             669.54 kB │ gzip: 204.95 kB
+
+✓ built in 754ms
+
+PWA v1.3.0
+mode      generateSW
+precache  287 entries (1552.64 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-2fbc6a65.js
+
+Running 2 tests using 1 worker
+
+  ✓  1 apps\web\e2e\accounts.spec.ts:3:1 › account settings register, merge, disconnect and reopen the same account (2.8s)
+  ✓  2 apps\web\e2e\accounts.spec.ts:38:1 › cloud originals arrive in a separate browser and remain available offline (3.7s)
+
+  2 passed (9.8s)
+
+> nook@0.1.0 build
+> npm run build --workspace @nook/web
+
+
+> @nook/web@0.1.0 build
+> vite build
+
+vite v8.3.1 building client environment for production...
+transforming...
+✓ 424 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/registerSW.js                                          0.13 kB
+dist/manifest.webmanifest                                   0.30 kB
+dist/index.html                                             0.61 kB │ gzip:   0.37 kB
+dist/assets/inter-vietnamese-400-normal-DMkecbls.woff2      4.97 kB
+dist/assets/inter-vietnamese-700-normal-DlLaEgI2.woff2      5.10 kB
+dist/assets/inter-vietnamese-500-normal-DOriooB6.woff2      5.11 kB
+dist/assets/inter-greek-ext-400-normal-DGGRlc-M.woff2       5.26 kB
+dist/assets/inter-greek-ext-500-normal-C4iEst2y.woff2       5.42 kB
+dist/assets/inter-greek-ext-700-normal-qfdV9bQt.woff2       5.44 kB
+dist/assets/inter-vietnamese-400-normal-Bbgyi5SW.woff       6.50 kB
+dist/assets/inter-vietnamese-500-normal-mJboJaSs.woff       6.59 kB
+dist/assets/inter-vietnamese-700-normal-BZaoP0fm.woff       6.63 kB
+dist/assets/inter-greek-ext-400-normal-KugGGMne.woff        7.06 kB
+dist/assets/inter-greek-ext-500-normal-2j5mBUwD.woff        7.19 kB
+dist/assets/inter-greek-ext-700-normal-BoQ6DsYi.woff        7.21 kB
+dist/assets/inter-cyrillic-400-normal-obahsSVq.woff2        7.71 kB
+dist/assets/inter-greek-400-normal-B4URO6DV.woff2           7.77 kB
+dist/assets/inter-cyrillic-500-normal-BasfLYem.woff2        7.90 kB
+dist/assets/inter-cyrillic-700-normal-CjBOestx.woff2        7.90 kB
+dist/assets/inter-greek-500-normal-BIZE56-Y.woff2           7.92 kB
+dist/assets/inter-greek-700-normal-C3JjAnD8.woff2           7.92 kB
+dist/assets/inter-cyrillic-400-normal-HOLc17fK.woff         9.78 kB
+dist/assets/inter-cyrillic-700-normal-DrXBdSj3.woff         9.91 kB
+dist/assets/inter-greek-400-normal-q2sYcFCs.woff            9.92 kB
+dist/assets/inter-cyrillic-500-normal-CxZf_p3X.woff         9.94 kB
+dist/assets/inter-greek-500-normal-Xzm54t5V.woff            9.98 kB
+dist/assets/inter-greek-700-normal-BUv2fZ6O.woff            9.98 kB
+dist/assets/inter-cyrillic-ext-400-normal-BQZuk6qB.woff2   10.23 kB
+dist/assets/inter-cyrillic-ext-500-normal-B0yAr1jD.woff2   10.43 kB
+dist/assets/inter-cyrillic-ext-700-normal-BjwYoWNd.woff2   10.49 kB
+dist/assets/inter-cyrillic-ext-400-normal-DQukG94-.woff    13.33 kB
+dist/assets/inter-cyrillic-ext-700-normal-LO58E6JB.woff    13.40 kB
+dist/assets/inter-cyrillic-ext-500-normal-BmqWE9Dz.woff    13.45 kB
+dist/assets/inter-latin-400-normal-C38fXH4l.woff2          23.66 kB
+dist/assets/inter-latin-500-normal-Cerq10X2.woff2          24.27 kB
+dist/assets/inter-latin-700-normal-Yt3aPRUw.woff2          24.35 kB
+dist/assets/inter-latin-400-normal-CyCys3Eg.woff           30.69 kB
+dist/assets/inter-latin-500-normal-BL9OpVg8.woff           31.28 kB
+dist/assets/inter-latin-700-normal-BLAVimhd.woff           31.32 kB
+dist/assets/inter-latin-ext-400-normal-C1nco2VV.woff2      35.00 kB
+dist/assets/inter-latin-ext-500-normal-CV4jyFjo.woff2      36.02 kB
+dist/assets/inter-latin-ext-700-normal-Ca8adRJv.woff2      36.24 kB
+dist/assets/inter-latin-ext-400-normal-77YHD8bZ.woff       47.56 kB
+dist/assets/inter-latin-ext-500-normal-BxGbmqWO.woff       48.49 kB
+dist/assets/inter-latin-ext-700-normal-TidjK2hL.woff       48.63 kB
+dist/assets/index-CNKtPrk2.css                             28.61 kB │ gzip:   6.12 kB
+dist/assets/firebase-auth-CM2NA4X-.js                       0.41 kB │ gzip:   0.27 kB
+dist/assets/index.esm-BY1OJsLt.js                         106.35 kB │ gzip:  31.98 kB
+dist/assets/firebase-rIx6T8gN.js                          464.97 kB │ gzip: 137.64 kB
+dist/assets/index-CUCgKmWE.js                             669.29 kB │ gzip: 204.83 kB
+
+✓ built in 761ms
+
+PWA v1.3.0
+mode      generateSW
+precache  287 entries (1552.39 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-2fbc6a65.js
++  Script exited successfully (code 0)
+i  emulators: Shutting down emulators.
+i  firestore: Stopping Firestore Emulator
+!  Firestore Emulator has exited upon receiving signal: SIGINT
+i  auth: Stopping Authentication Emulator
+i  storage: Stopping Storage Emulator
+i  hub: Stopping emulator hub
+i  logging: Stopping Logging Emulator

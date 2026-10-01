@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="app.nook.CaptureFlowTest" tests="10" failures="0" errors="0" skipped="0" time="61.195" timestamp="2026-10-01T05:21:48" hostname="localhost">
+  <properties>
+    <property name="device" value="Iza_Pixel_8_API_36(AVD) - 16" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="inlineInboxThoughtSavesWithoutOrganizationAndReopensOffline" classname="app.nook.CaptureFlowTest" time="10.464" />
+  <testcase name="captureClarifyAndReopen" classname="app.nook.CaptureFlowTest" time="19.283" />
+  <testcase name="keyboardCaptureAndProjectAssignmentUseVisibleActionsAndDateDefaults" classname="app.nook.CaptureFlowTest" time="6.38" />
+  <testcase name="projectAssignmentAndCaptureDeletionCommitTogetherAndInvalidDestinationLeavesCapture" classname="app.nook.CaptureProjectTest" time="0.257" />
+  <testcase name="calendarAndClockDialogsSelectValuesWithoutTypingAndCancelPreservesDate" classname="app.nook.DateChoiceTest" time="4.049" />
+  <testcase name="openingBacklinkSavesTheCurrentNoteDraft" classname="app.nook.RecordContextTest" time="2.83" />
+  <testcase name="linkedAreaWorkOpensAndNewTasksRetainProjectAndArea" classname="app.nook.RecordContextTest" time="7.42" />
+  <testcase name="editorRefreshesPristineDraftsPreservesDirtyDraftsAndSavesAreaContext" classname="app.nook.RecordContextTest" time="4.104" />
+  <testcase name="sharedPhotoSavesOriginalWithoutRequiredCaption" classname="app.nook.ShareCaptureTest" time="2.561" />
+  <testcase name="shareUrlSavesToLocalInboxAndShortcutsAreRegistered" classname="app.nook.ShareCaptureTest" time="1.992" />
+</testsuite>

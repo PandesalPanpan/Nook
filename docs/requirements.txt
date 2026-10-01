@@ -1,0 +1,731 @@
+/goal Build Nook completely as a production-quality offline-first Android + Web personal second-brain / productivity application based on the existing Figma design.
+
+FIGMA — SOURCE OF TRUTH
+https://www.figma.com/design/AtvThX3LNHp8kP1iItDB5N
+
+Use the Figma integration / available Figma tools to inspect the actual design, screens, variables, measurements, components, spacing, typography, states, and responsive layouts.
+
+IMPORTANT:
+- The character/mascot illustrations have intentionally been REMOVED.
+- Do NOT recreate Nookling, mascots, Headspace characters, illustrations, blobs, or decorative people.
+- Keep the clean MarticioUI Night interface shown in the current Figma.
+- Do not redesign the product unless something is clearly impossible or inconsistent.
+- The current Figma is the visual source of truth.
+
+Do not stop after scaffolding. Build the application and continue through implementation, integration, testing, and build verification.
+
+==================================================
+PRODUCT
+==================================================
+
+Name: Nook
+
+Purpose:
+A very fast, calm, offline-first personal operating system / second brain using PARA principles.
+
+Primary interaction:
+Capture first → clarify later → organize → act → archive.
+
+The user should NEVER have to choose a folder/type before quickly saving a thought.
+
+Core principles:
+1. Capture must be extremely fast.
+2. Device-local database is the immediate source of truth.
+3. Firebase is synchronization, not the primary runtime database.
+4. Nook must remain useful with airplane mode enabled.
+5. Use smart defaults and progressive disclosure following “Don’t Make Me Think”.
+6. PARA should be taught contextually rather than through a giant tutorial.
+7. AI only suggests actions; it must never silently reorganize user data.
+8. Avoid guilt-driven productivity UX, punishment streaks, or noisy dashboards.
+9. Android integration is a first-class feature, not an afterthought.
+10. Web should be designed for desktop rather than simply stretching the mobile UI.
+
+==================================================
+LOCKED TECH STACK
+==================================================
+
+ANDROID
+- Kotlin
+- Jetpack Compose
+- Material APIs only where appropriate, styled to MarticioUI
+- Room / SQLite as local source of truth
+- Coroutines + Flow
+- WorkManager for reliable background work
+- Android notification APIs
+- Glance for Android home-screen widgets
+- Android Sharesheet / ACTION_SEND support
+- launcher shortcuts
+- Firebase Android SDK
+
+WEB
+- React
+- TypeScript
+- Vite unless this workspace already has an appropriate React setup
+- IndexedDB using Dexie
+- responsive desktop UI matching the Figma
+- Firebase Web SDK
+
+CLOUD
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Storage
+- Firebase Cloud Messaging where appropriate
+- Firebase Emulator support for development
+
+Do NOT replace native Android with React Native, Flutter, Capacitor, or another cross-platform wrapper.
+
+A reasonable repository layout is:
+
+nook/
+  apps/
+    android/
+    web/
+  packages/
+    schemas/
+    design-tokens/
+  firebase/
+    firestore.rules
+    storage.rules
+    firestore.indexes.json
+  docs/
+
+Adapt this if the existing workspace/repository already has a sensible structure.
+
+==================================================
+OFFLINE-FIRST ARCHITECTURE
+==================================================
+
+This is extremely important.
+
+ANDROID:
+UI
+→ repository/domain layer
+→ Room
+→ durable sync outbox
+→ Firebase
+
+WEB:
+UI
+→ repository/domain layer
+→ Dexie / IndexedDB
+→ durable sync outbox
+→ Firebase
+
+Every normal mutation must:
+1. write locally first,
+2. immediately update the UI,
+3. enqueue the remote operation,
+4. sync asynchronously when connectivity exists.
+
+The app must not block normal use while waiting for Firebase.
+
+Implement:
+- durable outbox
+- retry/backoff
+- tombstones for deletions
+- schema versioning
+- updatedAt timestamps
+- createdAt
+- device/client IDs as appropriate
+- account isolation
+- safe sign-out
+- conflict handling
+
+For normal same-record conflicts, a deterministic last-write-wins strategy is acceptable for V1, but document it clearly.
+
+Deleting something offline must NOT cause it to reappear when another client reconnects.
+
+==================================================
+LOCAL-ONLY MODE
+==================================================
+
+Nook must work without an account.
+
+Default onboarding should allow:
+“Use Nook without an account”
+
+Local-only users get the complete core application except cross-device cloud sync.
+
+Later they can enable Firebase sync.
+
+When a local user signs in:
+- safely merge/upload existing local data
+- do not replace the local database with an empty cloud account
+- prevent duplicate imports as much as reasonably possible
+
+Do not reuse any unrelated Firebase project from other applications.
+
+If Firebase credentials/project provisioning are unavailable, implement the entire local architecture and Firebase integration/emulator/config templates anyway, then report the exact external configuration still needed.
+
+==================================================
+DATA MODEL
+==================================================
+
+Create a clean shared conceptual schema for at least:
+
+User/Profile
+InboxCapture
+Note
+Task
+Project
+Area
+Resource
+Attachment
+DailyNote
+Reminder
+Recurrence
+NoteLink
+SyncOperation / outbox entry
+AppSettings
+
+Important relationships:
+
+Project:
+- title
+- outcome
+- target date
+- progress
+- areaId optional
+- tasks
+- notes/resources
+
+Area:
+- ongoing responsibility
+- standards
+- recurring responsibilities
+- related projects/resources
+
+Task:
+- title
+- completed
+- doDate optional
+- deadline optional
+- reminder optional
+- recurrence optional
+- projectId optional
+- areaId optional
+- parentTaskId optional
+- subtasks
+
+Note:
+- title optional
+- body
+- PARA destination/context
+- outgoing note links
+- backlinks computed/indexed appropriately
+- attachments
+
+InboxCapture should support:
+- text thought
+- task-like capture
+- link
+- image/photo/screenshot
+
+Do not create “Fleeting Notes” as another major permanent folder.
+Unprocessed fleeting thoughts simply live in Inbox.
+
+==================================================
+CORE FEATURES
+==================================================
+
+Implement the screens and behavior represented in Figma, including:
+
+ONBOARDING
+- Welcome
+- optional local-only mode
+- optional account/sync setup
+- notification/reminder setup
+- lightweight PARA education
+
+TODAY
+- useful actions
+- upcoming deadlines
+- Inbox status
+- calm presentation
+
+INBOX
+- extremely fast capture
+- text
+- task
+- image/photo
+- link
+- instant save
+- no required title
+- no required organization before save
+
+After saving, optionally surface temporary actions:
+- Turn into task
+- Remind
+- Organize
+
+These actions must never block capture.
+
+INBOX PROCESSING
+Allow a capture to become:
+- Task
+- Note
+- Project
+- Resource
+- Archive
+
+AI may suggest a destination but must require confirmation.
+
+PROJECTS
+- title
+- outcome
+- target date
+- next action
+- progress
+- tasks/subtasks
+- notes/resources
+- associated Area
+
+AREAS
+- ongoing responsibilities
+- standards
+- recurring tasks/responsibilities
+- active projects
+- notes/resources
+
+RESOURCES
+- interest/reference collections
+- notes
+- links
+- attachments
+
+ARCHIVE
+- archived Projects
+- Resources
+- Notes
+- restoration
+
+TASKS
+Support BOTH:
+
+Do Date:
+when the user intends to work on it
+
+Deadline:
+when it actually must be finished
+
+Do not collapse these into one date.
+
+Also support:
+- subtasks
+- completion
+- reminder
+- recurrence
+- project
+- area
+
+NOTES
+Implement a comfortable editor with:
+- headings
+- bold
+- italic
+- lists
+- checklist
+- quote
+- code
+- links
+- attachments
+- note links/backlinks
+
+Support [[note links]] on desktop.
+
+On Android provide a visible “Link note” button because typing [[ ]] on a phone is inconvenient.
+
+DAILY NOTES
+- optional
+- automatically associated with a date
+- lightweight journal / scratch space
+- links to related items
+
+CALENDAR
+Keep it lightweight.
+Display:
+- do dates
+- deadlines
+- scheduled/reminder-related work
+- useful daily agenda
+
+Do not turn Nook into a full Google Calendar replacement.
+
+SEARCH
+Must be fast and local.
+
+Search at least:
+- notes
+- projects
+- areas
+- resources
+- tasks
+
+Support useful filters eventually / where represented, e.g.
+project:
+area:
+before:
+
+Search must continue working offline.
+
+WEEKLY REVIEW
+Implement the calm review flow represented in Figma:
+- clear Inbox
+- review active Projects
+- check Areas
+- select next focus
+
+No punitive streaks.
+
+PARA TIPS
+Show contextual, dismissible learning moments.
+
+Examples:
+“Areas don’t have finish lines.”
+“Stay healthy = Area. Lose 5 kg = Project.”
+“When unsure, leave it in Inbox.”
+“Archive aggressively. Search is your safety net.”
+
+Provide:
+- Got it
+- Learn more
+- suppress similar tips where sensible
+
+==================================================
+ANDROID INTEGRATION
+==================================================
+
+This is a major product requirement.
+
+Implement Android home-screen widgets matching Figma:
+
+1×1 Capture
+- one tap opens immediate quick capture
+
+2×1 Quick Capture
+- fast entry points for thought/task/photo/link
+
+2×2 Inbox
+- count
+- recent captures
+- Process Inbox
+- Capture
+
+4×2 Today
+- useful next actions
+- task completion where Glance permits sensible interaction
+
+4×2 Project
+- chosen project
+- progress
+- next action
+
+Also implement:
+
+SHARE TO NOOK
+From browser/gallery/other apps:
+Share → Nook
+
+Handle:
+- URL
+- text
+- image where available
+
+Open a small save surface.
+Saving to Inbox should be one obvious action.
+
+LAUNCHER SHORTCUTS
+- New thought
+- New task
+- Take photo
+
+NOTIFICATIONS
+Support:
+- task reminders
+- deadline reminders
+- Inbox review reminder
+
+If the Inbox is empty and the user selected “don’t notify when empty”, do not send the review notification.
+
+Use WorkManager for deferrable reliable background work.
+Only use exact-alarm APIs where a genuinely exact user-facing reminder requires them.
+
+Notification actions where sensible:
+- Capture
+- Process
+- Later
+
+==================================================
+AI
+==================================================
+
+Build AI as an OPTIONAL provider abstraction.
+
+Providers:
+- Off
+- OpenAI
+- DeepSeek
+- Custom OpenAI-compatible endpoint
+
+Allow BYOK API keys.
+
+Rules:
+- never commit keys
+- never log keys
+- never upload user API keys to Firebase
+- keep keys device/browser local
+- clearly separate provider implementation from product/domain logic
+
+Useful AI functions:
+- suggest Project/Area/Resource destination
+- break a Project/task into next actions
+- summarize a note
+- optional natural-language retrieval later
+
+AI must NEVER:
+- silently move records
+- silently delete records
+- silently alter tasks/projects
+- become required for core app functionality
+
+Core Nook must work perfectly with AI = Off.
+
+==================================================
+FIREBASE
+==================================================
+
+Use Firebase only as synchronization/cloud services.
+
+Design Firestore paths cleanly, for example:
+
+users/{uid}/notes/{id}
+users/{uid}/tasks/{id}
+users/{uid}/projects/{id}
+users/{uid}/areas/{id}
+users/{uid}/resources/{id}
+users/{uid}/captures/{id}
+users/{uid}/dailyNotes/{id}
+users/{uid}/settings/{id}
+
+Adjust if a better normalized structure is warranted.
+
+Create restrictive Firestore and Storage security rules:
+- authenticated users only for synced cloud data
+- user can only access their own tree/files
+- validate basic expected fields/schema where practical
+
+Attachments:
+Firebase Storage under the user namespace.
+
+Set up emulator configuration and automated rule tests where practical.
+
+==================================================
+DATA PORTABILITY
+==================================================
+
+Implement the Data & Export design.
+
+Export everything without requiring Firebase.
+
+At minimum:
+- notes as Markdown
+- structured metadata/data as JSON
+- attachments as original files
+- bundle into ZIP
+
+Support restoring a Nook backup.
+
+Design import architecture so Markdown folder imports are possible.
+
+The user must never be locked into Nook.
+
+==================================================
+DESIGN IMPLEMENTATION
+==================================================
+
+Match the current Figma closely.
+
+Use the existing:
+“Nook · Tokens”
+MarticioUI Night palette and spacing/radius system.
+
+Important visual characteristics:
+- warm charcoal background
+- dark warm surfaces
+- restrained borders
+- rounded ~16–24px surfaces
+- pill actions
+- blue primary actions
+- orange brand accent
+- yellow informational accents
+- teal/indigo support accents
+- clear typography
+- generous spacing
+- low visual noise
+
+Do NOT add:
+- mascots
+- characters
+- illustrations
+- random gradients
+- glassmorphism
+- neon cyberpunk styling
+- generic shadcn-looking white/gray dashboards
+- excessive animation
+
+Android and web must feel like the same product while respecting their platform.
+
+Use proper responsive desktop layouts from the WEB frames in Figma.
+Do not simply enlarge Android screens.
+
+==================================================
+PERFORMANCE
+==================================================
+
+Nook should feel extremely fast.
+
+Prioritize:
+- instant cold/open perception
+- local reads
+- optimistic/local writes
+- lazy loading where appropriate
+- indexed search
+- efficient Room queries
+- efficient IndexedDB queries
+- no unnecessary network request in the critical capture path
+- no AI calls during normal capture unless explicitly requested
+
+Quick capture should feel effectively instantaneous.
+
+==================================================
+ACCESSIBILITY
+==================================================
+
+Implement:
+- sensible Android content descriptions
+- keyboard accessibility on web
+- visible focus states
+- adequate touch targets
+- sufficient contrast
+- semantic form labels
+- reduced-motion friendliness
+- screen reader-friendly actionable elements
+
+==================================================
+TESTS
+==================================================
+
+Add meaningful automated tests.
+
+ANDROID:
+- repository/domain tests
+- Room tests
+- sync/outbox tests
+- ViewModel tests where useful
+
+WEB:
+- unit tests
+- Dexie/repository tests
+- important UI/component tests
+
+SYNC:
+Test at least:
+- create offline → reconnect → sync
+- update offline → reconnect
+- delete offline → tombstone → does not resurrect
+- local-only → sign in → initial upload/merge
+- cross-client update conflict behavior
+
+Add a small number of end-to-end happy-path tests where practical.
+
+==================================================
+EXECUTION RULES
+==================================================
+
+Start by:
+1. Inspecting the workspace/repository.
+2. Inspecting the Figma through available Figma tools.
+3. Writing a short implementation plan/TODO inside the repo.
+4. Establishing the shared data/schema and offline architecture.
+5. Building one complete vertical slice:
+   quick capture → local Inbox → process → Project/Task/Note.
+6. Then expand until the Figma/V1 scope is implemented.
+
+Do not repeatedly ask me for approval for normal technical decisions.
+
+Make reasonable engineering choices consistent with this goal.
+
+Only stop to ask me something if:
+- credentials are absolutely required,
+- an irreversible/external action needs authorization,
+- there is a genuine product ambiguity that materially affects data compatibility.
+
+Do not merely tell me how to implement something.
+Actually edit/create the files, run commands, fix errors, and continue.
+
+==================================================
+VERIFICATION
+==================================================
+
+Before declaring the goal complete:
+
+ANDROID
+- ./gradlew test
+- ./gradlew lint
+- build a debug APK successfully
+- run whatever additional checks the project establishes
+
+WEB
+- install cleanly
+- typecheck
+- lint
+- tests
+- production build
+
+FIREBASE
+- rules/config validate
+- emulator configuration works where feasible
+
+VISUAL
+Compare representative implementation screens against Figma:
+- Android Today
+- Quick Capture
+- Inbox / Clarify
+- Project
+- Note Editor
+- Calendar
+- Web Today
+- Web Inbox
+- Web Project
+- Web Note Editor
+
+Fix obvious visual mismatches before finishing.
+
+OFFLINE
+Explicitly verify core flows without internet/network access:
+- capture
+- edit
+- complete task
+- move/organize
+- search
+- delete
+- reopen application
+
+==================================================
+FINAL HANDOFF
+==================================================
+
+When complete, give me:
+- what was implemented
+- repository structure
+- architecture summary
+- commands to run Android
+- commands to run Web
+- Firebase setup still required, if any
+- tests/build results
+- known limitations / intentionally deferred V2 items
+- location of generated APK/build artifacts if available
+
+Do not claim something works unless you actually verified it.
+
+The objective is a genuinely usable Nook V1, not a UI-only prototype.

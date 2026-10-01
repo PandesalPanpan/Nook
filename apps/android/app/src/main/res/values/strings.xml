@@ -1,0 +1,10 @@
+<resources>
+    <string name="shortcut_thought">New thought</string>
+    <string name="shortcut_task">New task</string>
+    <string name="shortcut_photo">Take photo</string>
+    <string name="widget_capture">Nook Capture</string>
+    <string name="widget_quick">Nook Quick Capture</string>
+    <string name="widget_inbox">Nook Inbox</string>
+    <string name="widget_today">Nook Today</string>
+    <string name="widget_project">Nook Project</string>
+</resources>

@@ -1,0 +1,137 @@
+const imgEllipse = "https://www.figma.com/api/mcp/asset/9cc5dd1d-6ec3-41a4-be94-7e11bfacbeac.svg";
+const imgEllipse1 = "https://www.figma.com/api/mcp/asset/0edcff84-2823-42ff-958d-9889f22e554d.svg";
+const imgEllipse2 = "https://www.figma.com/api/mcp/asset/11daa4dc-2a15-41f6-8e54-c0016c1ef6c8.svg";
+const imgEllipse3 = "https://www.figma.com/api/mcp/asset/5b59d0a1-ce2d-494b-acea-2664db97a8b2.svg";
+
+export default function Component02Today() {
+  return (
+    <div className="bg-[#171412] overflow-clip relative rounded-[24px] size-full" data-node-id="2:121" data-name="02 · Today">
+      <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[21px] not-italic text-[#f5eee7] text-[12px] top-[16px] w-[44px]" data-node-id="2:122">
+        9:41
+      </p>
+      <div className="absolute left-[16px] size-[24px] top-[52px]" data-node-id="2:123" data-name="Ellipse">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse} />
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[25.2px] leading-[normal] left-[48px] not-italic text-[#f5eee7] text-[18px] top-[50px] tracking-[-0.8px] w-[100px]" data-node-id="2:124">
+        nook
+      </p>
+      <div className="absolute bg-[#342d28] h-[28px] left-[282px] overflow-clip rounded-[14px] top-[50px] w-[76px]" data-node-id="2:125" data-name="Frame">
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#cbbfb4] text-[12px] top-[6px] w-[52px]" data-node-id="2:126">
+          Sep 30
+        </p>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[42px] leading-[normal] left-[16px] not-italic text-[#f5eee7] text-[30px] top-[102px] tracking-[-0.8px] w-[343px]" data-node-id="2:127">
+        Good morning.
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[19.6px] leading-[normal] left-[16px] not-italic text-[#cbbfb4] text-[14px] top-[145px] w-[343px]" data-node-id="2:128">
+        Three things worth doing.
+      </p>
+      <div className="absolute bg-[#221d1a] h-[218px] left-[16px] overflow-clip rounded-[20px] top-[184px] w-[343px]" data-node-id="2:129" data-name="Frame">
+        <div className="absolute bg-[#ffce00] h-[28px] left-[16px] overflow-clip rounded-[14px] top-[16px] w-[72px]" data-node-id="2:130" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#171412] text-[12px] top-[6px] w-[48px]" data-node-id="2:131">
+            TODAY
+          </p>
+        </div>
+        <div className="absolute bg-[#221d1a] h-[48px] left-[16px] overflow-clip rounded-[12px] top-[54px] w-[311px]" data-node-id="2:132" data-name="Frame">
+          <div className="absolute bg-[#221d1a] border border-[#9c9187] border-solid left-0 rounded-[7px] size-[24px] top-[10px]" data-node-id="2:133" data-name="Frame" />
+          <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[36px] not-italic text-[#f5eee7] text-[14px] top-[3px] w-[267px]" data-node-id="2:134">
+            Finish Activity 3
+          </p>
+          <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[36px] not-italic text-[#cbbfb4] text-[11px] top-[25px] w-[267px]" data-node-id="2:135">
+            Do today · due Oct 2
+          </p>
+        </div>
+        <div className="absolute bg-[#221d1a] h-[48px] left-[16px] overflow-clip rounded-[12px] top-[108px] w-[311px]" data-node-id="2:136" data-name="Frame">
+          <div className="absolute bg-[#221d1a] border border-[#9c9187] border-solid left-0 rounded-[7px] size-[24px] top-[10px]" data-node-id="2:137" data-name="Frame" />
+          <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[36px] not-italic text-[#f5eee7] text-[14px] top-[3px] w-[267px]" data-node-id="2:138">
+            Capstone display module
+          </p>
+          <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[36px] not-italic text-[#cbbfb4] text-[11px] top-[25px] w-[267px]" data-node-id="2:139">
+            20 min next action
+          </p>
+        </div>
+        <div className="absolute bg-[#221d1a] h-[48px] left-[16px] overflow-clip rounded-[12px] top-[162px] w-[311px]" data-node-id="2:140" data-name="Frame">
+          <div className="absolute bg-[#221d1a] border border-[#9c9187] border-solid left-0 rounded-[7px] size-[24px] top-[10px]" data-node-id="2:141" data-name="Frame" />
+          <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[36px] not-italic text-[#f5eee7] text-[14px] top-[3px] w-[267px]" data-node-id="2:142">
+            Review application
+          </p>
+          <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[36px] not-italic text-[#cbbfb4] text-[11px] top-[25px] w-[267px]" data-node-id="2:143">
+            Due today · 5 PM
+          </p>
+        </div>
+      </div>
+      <div className="[word-break:break-word] absolute bg-[#221d1a] h-[118px] leading-[normal] left-[16px] not-italic overflow-clip rounded-[20px] top-[418px] w-[343px]" data-node-id="2:144" data-name="Frame">
+        <p className="absolute font-['Inter:Bold'] font-bold h-[19.6px] left-[16px] text-[#f5eee7] text-[14px] top-[16px] w-[200px]" data-node-id="2:145">
+          Coming up
+        </p>
+        <p className="absolute font-['Inter:Bold'] font-bold h-[18px] left-[16px] text-[#ff7e1d] text-[12px] top-[50px] w-[60px]" data-node-id="2:146">
+          Oct 4
+        </p>
+        <p className="absolute font-['Inter:Medium'] font-medium h-[18.2px] left-[82px] text-[#f5eee7] text-[13px] top-[49px] w-[220px]" data-node-id="2:147">
+          Capstone milestone
+        </p>
+        <p className="absolute font-['Inter:Bold'] font-bold h-[18px] left-[16px] text-[#3fae9b] text-[12px] top-[78px] w-[60px]" data-node-id="2:148">
+          Oct 7
+        </p>
+        <p className="absolute font-['Inter:Medium'] font-medium h-[18.2px] left-[82px] text-[#f5eee7] text-[13px] top-[77px] w-[220px]" data-node-id="2:149">
+          Embedded Systems quiz
+        </p>
+      </div>
+      <div className="absolute bg-[#342d28] h-[82px] left-[16px] overflow-clip rounded-[20px] top-[552px] w-[343px]" data-node-id="2:150" data-name="Frame">
+        <div className="absolute left-[16px] size-[38px] top-[22px]" data-node-id="2:151" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[21px] leading-[normal] left-[68px] not-italic text-[#f5eee7] text-[15px] top-[15px] w-[120px]" data-node-id="2:152">
+          Inbox · 7
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[68px] not-italic text-[#cbbfb4] text-[12px] top-[39px] w-[220px]" data-node-id="2:153">
+          A few thoughts are waiting.
+        </p>
+        <div className="absolute bg-[#3270e6] h-[28px] left-[257px] overflow-clip rounded-[14px] top-[26px] w-[70px]" data-node-id="2:154" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[12px] text-white top-[6px] w-[46px]" data-node-id="2:155">
+            Process
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#221d1a] h-[72px] left-0 overflow-clip top-[740px] w-[375px]" data-node-id="2:156" data-name="Frame">
+        <div className="absolute bg-[#453d37] h-px left-0 top-0 w-[375px]" data-node-id="2:157" data-name="Rectangle" />
+        <div className="absolute left-[34px] size-[18px] top-[10px]" data-node-id="2:158" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse2} />
+        </div>
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18px] leading-[normal] left-[43px] not-italic text-[#f5eee7] text-[10px] text-center top-[34px] w-[72px]" data-node-id="2:159">
+          Today
+        </p>
+        <div className="absolute left-[126px] size-[18px] top-[10px]" data-node-id="2:160" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse3} />
+        </div>
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[135px] not-italic text-[#9c9187] text-[10px] text-center top-[34px] w-[72px]" data-node-id="2:161">
+          Inbox
+        </p>
+        <div className="absolute left-[218px] size-[18px] top-[10px]" data-node-id="2:162" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse3} />
+        </div>
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[227px] not-italic text-[#9c9187] text-[10px] text-center top-[34px] w-[72px]" data-node-id="2:163">
+          Projects
+        </p>
+        <div className="absolute left-[310px] size-[18px] top-[10px]" data-node-id="2:164" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse3} />
+        </div>
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[319px] not-italic text-[#9c9187] text-[10px] text-center top-[34px] w-[72px]" data-node-id="2:165">
+          Library
+        </p>
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

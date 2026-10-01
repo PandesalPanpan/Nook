@@ -1,0 +1,225 @@
+const imgEllipse = "https://www.figma.com/api/mcp/asset/37f5fc80-4937-45d3-9d23-ef82eb89c483.svg";
+const imgEllipse1 = "https://www.figma.com/api/mcp/asset/37474303-cfdd-485a-8afc-60bafcf9283b.svg";
+const imgEllipse2 = "https://www.figma.com/api/mcp/asset/f70993ae-f36e-47d2-9cdf-9d724be83a2d.svg";
+const imgEllipse3 = "https://www.figma.com/api/mcp/asset/17b7f600-9b52-4b6f-81f4-b3cf4c341e5c.svg";
+const imgEllipse4 = "https://www.figma.com/api/mcp/asset/be7aa2e5-bf55-40a3-94d1-10c204b7ca7c.svg";
+const imgEllipse5 = "https://www.figma.com/api/mcp/asset/49b8b216-e3ae-40d5-8cbc-2dac8bcbab52.svg";
+
+export default function Web11Archive() {
+  return (
+    <div className="bg-[#171412] overflow-clip relative rounded-[24px] size-full" data-node-id="5:264" data-name="WEB 11 · Archive">
+      <div className="absolute bg-[#221d1a] h-[900px] left-0 overflow-clip top-0 w-[248px]" data-node-id="5:265" data-name="Frame">
+        <div className="absolute left-[28px] size-[28px] top-[26px]" data-node-id="5:266" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[28px] leading-[normal] left-[70px] not-italic text-[#f5eee7] text-[20px] top-[25px] tracking-[-0.8px] w-[100px]" data-node-id="5:267">
+          nook
+        </p>
+        <div className="absolute left-[28px] size-[18px] top-[104px]" data-node-id="5:268" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18.2px] leading-[normal] left-[62px] not-italic text-[#cbbfb4] text-[13px] top-[103px] w-[150px]" data-node-id="5:269">
+          Today
+        </p>
+        <div className="absolute left-[28px] size-[18px] top-[158px]" data-node-id="5:270" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18.2px] leading-[normal] left-[62px] not-italic text-[#cbbfb4] text-[13px] top-[157px] w-[150px]" data-node-id="5:271">
+          Inbox
+        </p>
+        <div className="absolute left-[28px] size-[18px] top-[212px]" data-node-id="5:272" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18.2px] leading-[normal] left-[62px] not-italic text-[#cbbfb4] text-[13px] top-[211px] w-[150px]" data-node-id="5:273">
+          Projects
+        </p>
+        <div className="absolute left-[28px] size-[18px] top-[266px]" data-node-id="5:274" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18.2px] leading-[normal] left-[62px] not-italic text-[#cbbfb4] text-[13px] top-[265px] w-[150px]" data-node-id="5:275">
+          Areas
+        </p>
+        <div className="absolute bg-[#342d28] h-[44px] left-[16px] rounded-[14px] top-[310px] w-[216px]" data-node-id="5:276" data-name="Frame" />
+        <div className="absolute left-[28px] size-[18px] top-[320px]" data-node-id="5:277" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse2} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18.2px] leading-[normal] left-[62px] not-italic text-[#f5eee7] text-[13px] top-[319px] w-[150px]" data-node-id="5:278">
+          Resources
+        </p>
+        <div className="absolute left-[28px] size-[18px] top-[374px]" data-node-id="5:279" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18.2px] leading-[normal] left-[62px] not-italic text-[#cbbfb4] text-[13px] top-[373px] w-[150px]" data-node-id="5:280">
+          Calendar
+        </p>
+        <div className="absolute bg-[#453d37] h-px left-[24px] top-[446px] w-[200px]" data-node-id="5:281" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18.2px] leading-[normal] left-[28px] not-italic text-[#cbbfb4] text-[13px] top-[474px] w-[160px]" data-node-id="5:282">
+          Search
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18.2px] leading-[normal] left-[28px] not-italic text-[#cbbfb4] text-[13px] top-[518px] w-[160px]" data-node-id="5:283">
+          Archive
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18.2px] leading-[normal] left-[28px] not-italic text-[#cbbfb4] text-[13px] top-[562px] w-[160px]" data-node-id="5:284">
+          Settings
+        </p>
+        <div className="absolute bg-[#342d28] h-[70px] left-[16px] overflow-clip rounded-[18px] top-[808px] w-[216px]" data-node-id="5:285" data-name="Frame">
+          <div className="absolute left-[14px] size-[32px] top-[16px]" data-node-id="5:286" data-name="Ellipse">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse3} />
+          </div>
+          <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[18px] leading-[normal] left-[58px] not-italic text-[#f5eee7] text-[12px] top-[12px] w-[120px]" data-node-id="5:287">
+            Synced
+          </p>
+          <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[58px] not-italic text-[#cbbfb4] text-[10px] top-[34px] w-[145px]" data-node-id="5:288">
+            Local-first · 0 pending
+          </p>
+        </div>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[44.8px] leading-[normal] left-[296px] not-italic text-[#f5eee7] text-[32px] top-[42px] tracking-[-0.8px] w-[700px]" data-node-id="5:289">
+        Archive
+      </p>
+      <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18.2px] leading-[normal] left-[296px] not-italic text-[#cbbfb4] text-[13px] top-[88px] w-[700px]" data-node-id="5:290">
+        Inactive, not deleted
+      </p>
+      <div className="absolute bg-[#221d1a] border border-[#453d37] border-solid h-[52px] left-[1050px] overflow-clip rounded-[18px] top-[36px] w-[330px]" data-node-id="5:291" data-name="Frame">
+        <div className="absolute left-[13px] size-[24px] top-[13px]" data-node-id="5:292" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse4} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18.2px] leading-[normal] left-[51px] not-italic text-[#9c9187] text-[13px] top-[15px] w-[180px]" data-node-id="5:293">
+          Quick capture
+        </p>
+        <div className="absolute bg-[#3270e6] h-[28px] left-[281px] overflow-clip rounded-[14px] top-[11px] w-[36px]" data-node-id="5:294" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[12px] text-white top-[6px] w-[12px]" data-node-id="5:295">
+            +
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#221d1a] h-[58px] left-[296px] overflow-clip rounded-[18px] top-[142px] w-[1084px]" data-node-id="5:296" data-name="Frame">
+        <div className="absolute bg-[#3270e6] h-[28px] left-[16px] overflow-clip rounded-[14px] top-[15px] w-[54px]" data-node-id="5:297" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[12px] text-white top-[6px] w-[30px]" data-node-id="5:298">
+            All
+          </p>
+        </div>
+        <div className="absolute bg-[#342d28] h-[28px] left-[78px] overflow-clip rounded-[14px] top-[15px] w-[92px]" data-node-id="5:299" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[68px]" data-node-id="5:300">
+            Projects
+          </p>
+        </div>
+        <div className="absolute bg-[#342d28] h-[28px] left-[178px] overflow-clip rounded-[14px] top-[15px] w-[104px]" data-node-id="5:301" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[80px]" data-node-id="5:302">
+            Resources
+          </p>
+        </div>
+        <div className="absolute bg-[#342d28] h-[28px] left-[290px] overflow-clip rounded-[14px] top-[15px] w-[76px]" data-node-id="5:303" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[52px]" data-node-id="5:304">
+            Notes
+          </p>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[824px] not-italic text-[#9c9187] text-[12px] top-[20px] w-[230px]" data-node-id="5:305">
+          Search archive
+        </p>
+      </div>
+      <div className="absolute bg-[#221d1a] h-[78px] left-[296px] overflow-clip rounded-[18px] top-[224px] w-[1084px]" data-node-id="5:306" data-name="Frame">
+        <div className="absolute left-[18px] size-[40px] top-[19px]" data-node-id="5:307" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse5} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[76px] not-italic text-[#f5eee7] text-[14px] top-[14px] w-[500px]" data-node-id="5:308">
+          Old portfolio v1
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[76px] not-italic text-[#cbbfb4] text-[11px] top-[42px] w-[400px]" data-node-id="5:309">
+          Project · Archived Sep 12
+        </p>
+        <div className="absolute bg-[#342d28] h-[28px] left-[948px] overflow-clip rounded-[14px] top-[25px] w-[86px]" data-node-id="5:310" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[62px]" data-node-id="5:311">
+            Restore
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#221d1a] h-[78px] left-[296px] overflow-clip rounded-[18px] top-[320px] w-[1084px]" data-node-id="5:312" data-name="Frame">
+        <div className="absolute left-[18px] size-[40px] top-[19px]" data-node-id="5:313" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse5} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[76px] not-italic text-[#f5eee7] text-[14px] top-[14px] w-[500px]" data-node-id="5:314">
+          Agile exam notes
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[76px] not-italic text-[#cbbfb4] text-[11px] top-[42px] w-[400px]" data-node-id="5:315">
+          Resource · Archived Sep 20
+        </p>
+        <div className="absolute bg-[#342d28] h-[28px] left-[948px] overflow-clip rounded-[14px] top-[25px] w-[86px]" data-node-id="5:316" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[62px]" data-node-id="5:317">
+            Restore
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#221d1a] h-[78px] left-[296px] overflow-clip rounded-[18px] top-[416px] w-[1084px]" data-node-id="5:318" data-name="Frame">
+        <div className="absolute left-[18px] size-[40px] top-[19px]" data-node-id="5:319" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse5} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[76px] not-italic text-[#f5eee7] text-[14px] top-[14px] w-[500px]" data-node-id="5:320">
+          Terraria progression
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[76px] not-italic text-[#cbbfb4] text-[11px] top-[42px] w-[400px]" data-node-id="5:321">
+          Resource · Archived Sep 4
+        </p>
+        <div className="absolute bg-[#342d28] h-[28px] left-[948px] overflow-clip rounded-[14px] top-[25px] w-[86px]" data-node-id="5:322" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[62px]" data-node-id="5:323">
+            Restore
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#221d1a] h-[78px] left-[296px] overflow-clip rounded-[18px] top-[512px] w-[1084px]" data-node-id="5:324" data-name="Frame">
+        <div className="absolute left-[18px] size-[40px] top-[19px]" data-node-id="5:325" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse5} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[76px] not-italic text-[#f5eee7] text-[14px] top-[14px] w-[500px]" data-node-id="5:326">
+          2026 job search batch
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[76px] not-italic text-[#cbbfb4] text-[11px] top-[42px] w-[400px]" data-node-id="5:327">
+          Project · Archived Sep 28
+        </p>
+        <div className="absolute bg-[#342d28] h-[28px] left-[948px] overflow-clip rounded-[14px] top-[25px] w-[86px]" data-node-id="5:328" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[62px]" data-node-id="5:329">
+            Restore
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#221d1a] h-[78px] left-[296px] overflow-clip rounded-[18px] top-[608px] w-[1084px]" data-node-id="5:330" data-name="Frame">
+        <div className="absolute left-[18px] size-[40px] top-[19px]" data-node-id="5:331" data-name="Ellipse">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse5} />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[76px] not-italic text-[#f5eee7] text-[14px] top-[14px] w-[500px]" data-node-id="5:332">
+          Old ESP8266 demo
+        </p>
+        <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal h-[18px] leading-[normal] left-[76px] not-italic text-[#cbbfb4] text-[11px] top-[42px] w-[400px]" data-node-id="5:333">
+          Note · Archived Aug 31
+        </p>
+        <div className="absolute bg-[#342d28] h-[28px] left-[948px] overflow-clip rounded-[14px] top-[25px] w-[86px]" data-node-id="5:334" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#f5eee7] text-[12px] top-[6px] w-[62px]" data-node-id="5:335">
+            Restore
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#342d28] h-[90px] left-[296px] overflow-clip rounded-[20px] top-[724px] w-[1084px]" data-node-id="5:336" data-name="Frame">
+        <div className="absolute bg-[#ffce00] h-[28px] left-[18px] overflow-clip rounded-[14px] top-[18px] w-[86px]" data-node-id="5:337" data-name="Frame">
+          <p className="[word-break:break-word] absolute font-['Inter:Medium'] font-medium h-[18px] leading-[normal] left-[12px] not-italic text-[#171412] text-[12px] top-[6px] w-[62px]" data-node-id="5:338">
+            PARA TIP
+          </p>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Inter:Bold'] font-bold h-[19.6px] leading-[normal] left-[124px] not-italic text-[#f5eee7] text-[14px] top-[22px] w-[600px]" data-node-id="5:339">
+          Archive aggressively. Search is your safety net.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

@@ -1,0 +1,6 @@
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/nook_icon_background" />
+    <foreground>
+        <inset android:drawable="@drawable/nook_brand" android:inset="26%" />
+    </foreground>
+</adaptive-icon>

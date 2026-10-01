@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-01",
+  "nativeOfflineSuite": {
+    "tests": 31,
+    "executed": 29,
+    "skipped": 2,
+    "failures": 0,
+    "errors": 0
+  },
+  "configuredNativeAccountFlow": {
+    "tests": 1,
+    "executed": 1,
+    "failures": 0,
+    "errors": 0
+  },
+  "nativeFirebaseTransport": {
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "scope": "Native automatic-worker status and existing integration regressions; full V1 acceptance remains open."
+}

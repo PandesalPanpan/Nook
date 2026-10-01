@@ -1,0 +1,7 @@
+{
+  "apiKey": "public-key-from-your-dedicated-nook-project",
+  "applicationId": "firebase-android-app-id",
+  "projectId": "your-dedicated-nook-project",
+  "storageBucket": "your-project-storage-bucket",
+  "googleWebClientId": "your-web-oauth-client-id.apps.googleusercontent.com"
+}
