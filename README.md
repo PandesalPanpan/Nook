@@ -31,4 +31,4 @@ See [architecture](docs/ARCHITECTURE.md) and [Firebase setup](docs/FIREBASE.md).
 
 ## Android releases
 
-Nook checks public GitHub Releases, verifies the APK checksum, package, version, and permanent signer before opening Android's installer. Checks are optional; GitHub outages do not block startup or offline use. The first production release is `v0.2.0` (`versionCode` 2). See [the release guide](docs/ANDROID_RELEASES.md) for CI secrets, Firebase certificate setup, first-install migration, and the exact future release command.
+Nook checks public GitHub Releases, verifies the APK checksum, package, version, and permanent signer before opening Android's installer. Checks are optional; GitHub outages do not block startup or offline use. The first production release was `v0.2.0` (`versionCode` 2); the current release is `v0.2.1` (`versionCode` 3). See [the release guide](docs/ANDROID_RELEASES.md) for CI secrets, Firebase certificate setup, first-install migration, and the exact future release command.

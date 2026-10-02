@@ -123,4 +123,11 @@ The permanent release SHA-1 and SHA-256 fingerprints have been added to the Fire
 
 ## Verification scope
 
-The release workflow runs Android unit tests, lint, `assembleDebug`, and `assembleRelease`; verifies the APK signer and metadata; then generates and publishes release metadata. The updater's pure validation, transport, and policy tests live under `apps/android/app/src/test/java/app/nook/updates`; UI behavior is covered under `src/androidTest`. A real installer confirmation and Google Sign-In require a compatible Android device/emulator.
+The release workflow runs Android unit tests, lint, `assembleDebug`, and `assembleRelease`; verifies the APK signer and metadata; then generates and publishes release metadata. The updater's pure validation, transport, and policy tests live under `apps/android/app/src/test/java/app/nook/updates`; UI behavior is covered under `src/androidTest`.
+
+### Published releases and in-place upgrade check — 2026-10-02
+
+- Public releases `v0.2.0` and `v0.2.1` completed their GitHub Actions workflows successfully ([v0.2.0 run](https://github.com/PandesalPanpan/Nook/actions/runs/36976384689), [v0.2.1 run](https://github.com/PandesalPanpan/Nook/actions/runs/36977557356)). Each release has its versioned APK and `update.json`. The v0.2.1 APK is `nook-v0.2.1.apk`, version code 3, SHA-256 `e4e342baf528d617eb66610ae20da44a8c7d96f3cdffe37c651e065b60c0d687`.
+- The latest local release build report has 118 JVM tests in each of the debug and release variants, with no failures, errors, or skips. The release workflow also completed lint and both APK builds.
+- The actual v0.2.0 → v0.2.1 in-app update was completed on the disposable `NookReleaseDisposable` Android emulator. Nook's manual check found v0.2.1, downloaded it, verified it, opened Android's normal installer, and completed the update. After reopening, Android reported version code 3 / version name 0.2.1, Nook reported no update available, and a synthetic Inbox capture created before the update was still present. The app-specific unknown-apps setting was enabled only on that disposable emulator. No physical phone was used.
+- The Firebase client config and permanent release certificate fingerprints are configured for release builds. Live Google Sign-In and email/password authentication were not exercised in this pass; no test account was used.
