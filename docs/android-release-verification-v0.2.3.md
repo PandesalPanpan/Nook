@@ -50,4 +50,15 @@ Screenshots:
 
 ## Web hosting status
 
-The web app production build contains the dormouse favicon, Apple touch icon, and PWA icons. This repository has no web hosting target configured, so this release did not publish a live website deployment; the public browser-tab icon changes when the web build is deployed to its host.
+The local web production build contains the dormouse favicon, Apple touch icon, and PWA icons. The existing Netlify site is `nookmarticio` at https://nook.marticio.com, linked to this repository. Netlify skipped production builds for the mascot commit (`9d71ef7`), Android release commit (`1e6b8aa`), and verification commit (`3277d10`) with the error **“Skipped due to account credit usage exceeded.”** A manual `netlify deploy --prod` attempt returned `Forbidden`.
+
+The public site is therefore still on its earlier deployment. Its live HTML has no favicon link, `/favicon-48.png` falls back to the app HTML, and its web manifest still points to the old SVG mark. The web favicon/PWA icon change is built in the repository but is not live yet.
+
+To finish the web publication, restore or wait for the PandesalPanpan Netlify team's build/deploy credits, then run from `apps/web`:
+
+```sh
+npx --yes --package=netlify-cli netlify link --id 3d840de1-307b-4c81-bf67-df5a9463cfba
+npx --yes --package=netlify-cli netlify deploy --prod
+```
+
+The link step may ask you to select `@nook/web`. The site dashboard is https://app.netlify.com/projects/nookmarticio.

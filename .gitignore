@@ -21,3 +21,6 @@ signing.properties
 
 test-results/
 playwright-report/
+
+# Local Netlify folder
+.netlify
