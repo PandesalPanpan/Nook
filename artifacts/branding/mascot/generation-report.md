@@ -43,3 +43,5 @@ The six original files above are retained unchanged. A1 is also the high-resolut
 
 The image keeps its generated warm-dark background, which blends with Nook's current Night welcome screen. The mascot appears only on the Android and web welcome screens; both instances describe the character to assistive technology. Review of the darker elevated Inbox panel exposed a visible matte edge, so the mascot is not placed there. Nook currently ships only the Night palette; the same matte would stand out on a light surface, so the asset needs a transparent or light-surface treatment before Nook adds a light theme. The Android adaptive launcher icon was inspected and left unchanged.
 
+Visual review evidence is in `screenshots/`: the Android welcome screen was captured from the published v0.2.2 APK on a clean Pixel 8 API 36 emulator at 1080 × 2400, and the web welcome screen was checked at 1440 × 900 and 320 × 760. The image stays proportional and visible on both screen sizes; the welcome content scrolls on the narrow web viewport without clipping. Nook has no light theme today, so only its supported warm-dark surface is used in product.
+
