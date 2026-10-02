@@ -79,3 +79,7 @@ input::placeholder,textarea::placeholder{color:var(--secondary);opacity:1}
 .danger{color:#f47774}
 
 .clarify:focus-visible{outline:2px solid var(--yellow);outline-offset:4px}.clarify-keyboard{margin-top:30px!important}.clarify-keyboard strong{display:inline-block;margin-bottom:8px;color:var(--muted)}.clarify-attach{margin-top:16px}
+
+.brand-mascot { width: 28px; height: 28px; object-fit: contain; }
+.page-heading { flex: 1; min-width: 0; display: flex; align-items: center; gap: 16px; }
+.page-mascot { width: 72px; height: 72px; object-fit: contain; flex: 0 0 auto; }

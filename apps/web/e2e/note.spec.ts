@@ -30,11 +30,12 @@ test('desktop note source layout, keyboard links and original files persist offl
   await expect(page.locator('.note-backlinks .linked-record')).toHaveCount(2);
   await expect(page.getByRole('textbox',{name:'Note body',exact:true})).toHaveCount(0);
   await expect(page.locator('.note-details details')).not.toHaveAttribute('open');
-  const assets=await page.locator('.sidebar .marker,.capture-trigger .marker').evaluateAll(nodes=>nodes.map(node=>{
+  await expect(page.locator('.sidebar .brand-mascot')).toBeVisible();
+  const assets=await page.locator('.sidebar img,.capture-trigger img').evaluateAll(nodes=>nodes.map(node=>{
     const image=node as HTMLImageElement;const rect=image.getBoundingClientRect();return {source:image.getAttribute('src'),width:rect.width,height:rect.height,loaded:image.complete && image.naturalWidth>0};
   }));
   expect(assets).toEqual([
-    {source:'/figma/3-402-imgEllipse.svg',width:28,height:28,loaded:true},
+    {source:'/branding/nook-mascot-icon.png',width:28,height:28,loaded:true},
     ...[1,1,1,1,2,1].map(index=>({source:`/figma/3-402-imgEllipse${index}.svg`,width:18,height:18,loaded:true})),
     {source:'/figma/3-402-imgEllipse3.svg',width:32,height:32,loaded:true},
     {source:'/figma/3-402-imgEllipse4.svg',width:24,height:24,loaded:true},

@@ -118,15 +118,7 @@ class MainActivity : ComponentActivity() {
 @Composable private fun Heading(text: String, size: Int = 24) { Text(text, fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = size.sp, lineHeight = (size * 1.2).sp, color = Text) }
 @Composable private fun Copy(text: String, modifier: Modifier = Modifier) { Text(text, modifier, fontFamily = Inter, fontSize = 14.sp, color = Secondary) }
 @Composable internal fun Dot() {
-    val context = LocalContext.current
-    val bitmap = remember(context) {
-        val svg = com.caverock.androidsvg.SVG.getFromAsset(context.assets, "figma/2-121-imgEllipse.svg")
-        val pixels = (24 * context.resources.displayMetrics.density).toInt()
-        android.graphics.Bitmap.createBitmap(pixels, pixels, android.graphics.Bitmap.Config.ARGB_8888).also {
-            val canvas = android.graphics.Canvas(it); canvas.scale(context.resources.displayMetrics.density, context.resources.displayMetrics.density); canvas.drawPicture(svg.renderToPicture())
-        }
-    }
-    Image(bitmap.asImageBitmap(), contentDescription = null, modifier = Modifier.size(24.dp))
+    Image(painterResource(R.drawable.nook_mascot_icon), contentDescription = null, modifier = Modifier.size(28.dp))
 }
 @Composable private fun Panel(content: @Composable ColumnScope.() -> Unit) {
     Column(Modifier.fillMaxWidth().background(Surface, RoundedCornerShape(20.dp)).border(1.dp, Border, RoundedCornerShape(20.dp)).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
@@ -189,11 +181,20 @@ class MainActivity : ComponentActivity() {
                 onRetryCheck = { scope.launch { updates.checkManually() } }
             )
             if (page != "Sync" && selected?.kind != "note") Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                Text(if(selected?.kind == "capture") "Clarify" else selected?.title() ?: if(page == "Today") "Good morning." else page, fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 30.sp, lineHeight = 42.sp, color = Text)
-                if(selected?.kind == "capture") Copy("What is this useful for?")
-                if(selected == null && page == "Today") {
-                    val dueCount = todayActions(tasks, active.filter { it.kind == "project" }, today).size
-                    Copy(if(dueCount == 0) "A little room to think." else "$dueCount ${if(dueCount == 1) "thing" else "things"} worth doing.")
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                        Text(if(selected?.kind == "capture") "Clarify" else selected?.title() ?: if(page == "Today") "Good morning." else page, fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 30.sp, lineHeight = 42.sp, color = Text)
+                        if(selected?.kind == "capture") Copy("What is this useful for?")
+                        if(selected == null && page == "Today") {
+                            val dueCount = todayActions(tasks, active.filter { it.kind == "project" }, today).size
+                            Copy(if(dueCount == 0) "A little room to think." else "$dueCount ${if(dueCount == 1) "thing" else "things"} worth doing.")
+                        }
+                    }
+                    if(selected == null && page == "Today") Image(
+                        painter = painterResource(R.drawable.nook_mascot_icon),
+                        contentDescription = "Nook's dormouse mascot",
+                        modifier = Modifier.size(72.dp)
+                    )
                 }
             }
             if (selected?.kind == "capture") {

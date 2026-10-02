@@ -41,7 +41,17 @@ The six original files above are retained unchanged. A1 is also the high-resolut
 - Web: apps/web/public/mascot/nook-mascot.png
 - Shared production master: nook-mascot-512.png
 
-The image keeps its generated warm-dark background, which blends with Nook's current Night welcome screen. The mascot appears only on the Android and web welcome screens; both instances describe the character to assistive technology. Review of the darker elevated Inbox panel exposed a visible matte edge, so the mascot is not placed there. Nook currently ships only the Night palette; the same matte would stand out on a light surface, so the asset needs a transparent or light-surface treatment before Nook adds a light theme. The Android adaptive launcher icon was inspected and left unchanged.
+The original welcome-screen image keeps its generated warm-dark background, which blends with Nook's current Night welcome screen. For v0.2.2, the mascot appeared only on Android and web Welcome; both instances described the character to assistive technology. The Android adaptive launcher icon was inspected and left unchanged in that release.
 
 Visual review evidence is in `screenshots/`: the Android welcome screen was captured from the published v0.2.2 APK on a clean Pixel 8 API 36 emulator at 1080 × 2400, and the web welcome screen was checked at 1440 × 900 and 320 × 760. The image stays proportional and visible on both screen sizes; the welcome content scrolls on the narrow web viewport without clipping. Nook has no light theme today, so only its supported warm-dark surface is used in product.
+
+## Follow-up production use for v0.2.3
+
+Candidate **A1, the dormouse**, remains the selected mascot. A centered composition was made from A1 for the adaptive launcher silhouette and shared web brand. The complete ears, face, and paws now fit inside the adaptive icon's central mask-safe area on circular and squircle launchers. The cutout is transparent; the launcher background remains Nook warm charcoal `#171412`. A custom white vector silhouette is provided as the optional Android themed-icon layer.
+
+The full-resolution icon composition is `nook-mascot-icon-source.png` (1254 × 1254, 615,368 bytes, SHA-256 `6C3C4A73DAC048BA40E9E03F41A2EB0753CA39B4781DF3590D6AFA9893F229F`). Its lossless 512 × 512 production derivative is `nook-mascot-icon-512.png` (128,111 bytes, SHA-256 `F55C9E07F2CC93C5BCCC3DA3C4ADB1BD435349EC51C7DBE7CAE1DDDC3A538617`). The Android launcher uses it at `apps/android/app/src/main/res/drawable-nodpi/nook_mascot_icon.png` and declares the foreground, background, and monochrome layers in `apps/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`.
+
+Inside Android, the dormouse replaces the small orange brand marker and appears beside the Today greeting at 72 dp. On web, it replaces the sidebar and welcome wordmark markers and appears beside the Today heading. Web metadata includes a 48 × 48 tab favicon, 180 × 180 Apple touch icon, and mask-safe 192 × 192 and 512 × 512 PWA icons. The full illustrated welcome asset remains in place. The monochrome layer is a simplified silhouette so the character remains distinct under wallpaper tinting; its internal colors and face details are not represented in themed-icon mode.
+
+Visual review images for this placement and release are in `screenshots/`, including desktop/mobile web Today, Android Today, and launcher masking. The product continues to ship only Nook's Night palette.
 

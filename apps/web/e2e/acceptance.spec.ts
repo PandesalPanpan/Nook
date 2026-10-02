@@ -26,7 +26,14 @@ async function readableVisibleText(page:Page) {
 
 test('desktop Today and Inbox source hierarchy, visible contrast and local actions work offline',async({page,context})=>{
   await page.goto('/');await page.getByRole('button',{name:'Use Nook without an account'}).click();
-  await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href','/favicon-48.png');
+  const webManifest=await page.evaluate(async()=>fetch('/manifest.webmanifest').then(response=>response.json()));
+  expect(webManifest.icons).toEqual([
+    {src:'/icons/nook-pwa-192.png',sizes:'192x192',type:'image/png',purpose:'any maskable'},
+    {src:'/icons/nook-pwa-512.png',sizes:'512x512',type:'image/png',purpose:'any maskable'},
+  ]);
+  await context.setOffline(true);
   const today=await page.evaluate(()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;});
   const time=Date.now();const base={accountId:'local:fixture',clientId:'fixture',schemaVersion:1,createdAt:time,updatedAt:time,deleted:false,archived:false} as const;
   const records:Entity[]=[
@@ -44,11 +51,15 @@ test('desktop Today and Inbox source hierarchy, visible contrast and local actio
   await page.getByRole('button',{name:'Today',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Things worth doing.'})).toBeVisible();await expect(page.getByRole('checkbox',{name:'Complete Finish Activity 3'})).toBeVisible();
   await expect(page.locator('.inbox-summary .pill')).toHaveText('7');await expect(page.locator('.upcoming .deadline')).toHaveCount(3);
-  await readableVisibleText(page);await page.screenshot({path:'artifacts/visual/web-today-populated.png',fullPage:true});
+  await readableVisibleText(page);await expect(page.locator('.page-mascot')).toHaveAttribute('alt',"Nook's dormouse mascot");await page.screenshot({path:'artifacts/branding/mascot/screenshots/web-today-v0.2.3.png',fullPage:true});
+  await page.setViewportSize({width:390,height:844});await expect(page.locator('.page-mascot')).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await page.screenshot({path:'artifacts/branding/mascot/screenshots/web-today-mobile-v0.2.3.png',fullPage:true});
+  await page.setViewportSize({width:1440,height:900});
   const todayAssets=await page.locator('.sidebar img,.capture-trigger img').evaluateAll(images=>images.map(image=>{const item=image as HTMLImageElement;const box=item.getBoundingClientRect();return {src:item.getAttribute('src'),loaded:item.complete&&item.naturalWidth>0,width:box.width,height:box.height};}));
-  expect(todayAssets).toHaveLength(9);for(const asset of todayAssets){expect(asset.loaded).toBe(true);expect(asset.src).toMatch(/^\/figma\/3-154-/);expect(asset.width).toBe(asset.height);expect([18,24,28,32]).toContain(asset.width);}
+  expect(todayAssets).toHaveLength(9);for(const asset of todayAssets){expect(asset.loaded).toBe(true);if(asset.src==='/branding/nook-mascot-icon.png')expect(asset.width).toBe(28);else expect(asset.src).toMatch(/^\/figma\/3-154-/);expect(asset.width).toBe(asset.height);expect([18,24,28,32]).toContain(asset.width);}
   await page.getByRole('button',{name:'Inbox',exact:true}).click();await expect(page.getByRole('heading',{name:'Research ESP32 deep sleep',exact:true})).toBeVisible();
-  await expect(page.locator('.capture-item')).toHaveCount(7);await readableVisibleText(page);await page.screenshot({path:'artifacts/visual/web-inbox-populated.png',fullPage:true});
+  await expect(page.locator('.capture-item')).toHaveCount(7);await readableVisibleText(page);await page.screenshot({path:'artifacts/branding/mascot/screenshots/web-inbox-v0.2.3.png',fullPage:true});
   const markers=await page.locator('.capture-item img').evaluateAll(images=>images.map(image=>{const item=image as HTMLImageElement;const box=item.getBoundingClientRect();return {src:item.getAttribute('src'),loaded:item.complete&&item.naturalWidth>0,width:box.width,height:box.height};}));
   expect(markers.slice(0,5).map(item=>item.src)).toEqual([5,6,7,8,9].map(index=>`/figma/3-235-imgEllipse${index}.svg`));for(const item of markers){expect(item.loaded).toBe(true);expect(item.width).toBe(34);expect(item.height).toBe(34);}
   await page.getByRole('button',{name:'Today',exact:true}).click();
