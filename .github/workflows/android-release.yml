@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -20,7 +21,6 @@ jobs:
       NOOK_RELEASE_STORE_PASSWORD: ${{ secrets.NOOK_RELEASE_STORE_PASSWORD }}
       NOOK_RELEASE_KEY_ALIAS: ${{ secrets.NOOK_RELEASE_KEY_ALIAS }}
       NOOK_RELEASE_KEY_PASSWORD: ${{ secrets.NOOK_RELEASE_KEY_PASSWORD }}
-      NOOK_RELEASE_KEYSTORE_PATH: ${{ runner.temp }}/nook-release.p12
 
     steps:
       - name: Check out the tagged source
@@ -105,12 +105,15 @@ jobs:
             fi
           done
           umask 077
-          printf '%s' "${NOOK_RELEASE_KEYSTORE_BASE64}" | base64 --decode > "${NOOK_RELEASE_KEYSTORE_PATH}"
-          test -s "${NOOK_RELEASE_KEYSTORE_PATH}"
-          chmod 600 "${NOOK_RELEASE_KEYSTORE_PATH}"
+          key_path="${RUNNER_TEMP}/nook-release.p12"
+          printf '%s' "${NOOK_RELEASE_KEYSTORE_BASE64}" | base64 --decode > "${key_path}"
+          test -s "${key_path}"
+          chmod 600 "${key_path}"
 
       - name: Run Android tests, lint, and debug/release builds
         working-directory: apps/android
+        env:
+          NOOK_RELEASE_KEYSTORE_PATH: ${{ runner.temp }}/nook-release.p12
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon test lint assembleDebug assembleRelease
@@ -198,7 +201,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          rm -f "${NOOK_RELEASE_KEYSTORE_PATH:-}" \
+          rm -f "${RUNNER_TEMP}/nook-release.p12" \
             "${GITHUB_WORKSPACE}/apps/android/app/src/main/assets/nook-firebase.json" \
             "${RUNNER_TEMP}"/nook-v*.apk \
             "${RUNNER_TEMP}/update.json"
