@@ -6,8 +6,17 @@ coverage/
 local.properties
 .gradle/
 build/
+.kotlin/
 google-services.json
 nook-firebase.json
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+keystore.properties
+signing.properties
 *.log
 
 test-results/
