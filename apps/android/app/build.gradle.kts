@@ -5,6 +5,31 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
 }
+
+val releaseStoreFile = System.getenv("NOOK_RELEASE_KEYSTORE_PATH")
+val releaseStorePassword = System.getenv("NOOK_RELEASE_STORE_PASSWORD")
+val releaseKeyAlias = System.getenv("NOOK_RELEASE_KEY_ALIAS")
+val releaseKeyPassword = System.getenv("NOOK_RELEASE_KEY_PASSWORD")
+val releaseSigningValues = listOf(releaseStoreFile, releaseStorePassword, releaseKeyAlias, releaseKeyPassword)
+val releaseSigningConfigured = releaseSigningValues.all { !it.isNullOrBlank() }
+val releaseSigningRequested = gradle.startParameter.taskNames.any {
+    it.substringAfterLast(':').lowercase() in setOf("assemblerelease", "packagerelease", "bundlerelease", "installrelease")
+}
+if (releaseSigningValues.any { !it.isNullOrBlank() } && !releaseSigningConfigured) {
+    throw GradleException("Release signing requires NOOK_RELEASE_KEYSTORE_PATH, NOOK_RELEASE_STORE_PASSWORD, NOOK_RELEASE_KEY_ALIAS, and NOOK_RELEASE_KEY_PASSWORD.")
+}
+if (releaseSigningRequested && !releaseSigningConfigured) {
+    throw GradleException("assembleRelease requires the permanent Nook release signing environment variables.")
+}
+if (releaseSigningConfigured && !file(releaseStoreFile!!).isFile) {
+    throw GradleException("The configured Nook release keystore file is missing.")
+}
+
+val releaseCertificateSha256 = rootProject.file("release-certificate.sha256").readText().trim().uppercase()
+if (!releaseCertificateSha256.matches(Regex("^[A-F0-9]{64}$"))) {
+    throw GradleException("apps/android/release-certificate.sha256 must contain a 64-character SHA-256 fingerprint.")
+}
+
 android {
     namespace = "app.nook"
     compileSdk = 36
@@ -15,8 +40,25 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "NOOK_RELEASE_CERT_SHA256", "\"$releaseCertificateSha256\"")
     }
-    buildFeatures { compose = true }
+    buildFeatures { compose = true; buildConfig = true }
+    signingConfigs {
+        create("nookRelease") {
+            if (releaseSigningConfigured) {
+                storeFile = file(releaseStoreFile!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+                storeType = "PKCS12"
+            }
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            if (releaseSigningConfigured) signingConfig = signingConfigs.getByName("nookRelease")
+        }
+    }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     testOptions { unitTests.isIncludeAndroidResources = true }
     sourceSets.getByName("test").resources.srcDir("../../../packages/schemas/fixtures")

@@ -29,9 +29,15 @@ data class FirebaseConfiguration(
 
 /** Missing public configuration selects local-only mode; malformed configuration is an error. */
 fun loadFirebaseConfiguration(context: Context): FirebaseConfiguration? {
-    val filename = "nook-firebase.json"
+    return loadFirebaseConfigurationFromAsset(context, "nook-firebase.json")
+}
+
+internal fun loadFirebaseConfigurationFromAsset(context: Context, filename: String): FirebaseConfiguration? {
     if (context.assets.list("")?.contains(filename) != true) return null
     return context.assets.open(filename).bufferedReader().use { reader ->
-        wireJson.decodeFromString<FirebaseConfiguration>(reader.readText()).validateConfiguration()
+        parseFirebaseConfiguration(reader.readText())
     }
 }
+
+internal fun parseFirebaseConfiguration(raw: String): FirebaseConfiguration =
+    wireJson.decodeFromString<FirebaseConfiguration>(raw).validateConfiguration()

@@ -41,6 +41,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import app.nook.data.*
+import app.nook.updates.AboutUpdatesCard
+import app.nook.updates.UpdateBanner
+import app.nook.updates.UpdateManager
+import app.nook.updates.UpdateUiState
+import app.nook.updates.scheduleUpdateChecks
 import app.nook.data.Record
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -69,11 +74,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT), navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT))
         val preferences = getSharedPreferences("nook-local", MODE_PRIVATE)
+        val updates = UpdateManager.from(applicationContext)
+        scheduleUpdateChecks(applicationContext)
         lifecycleScope.launch(Dispatchers.IO) { AppGraph.initializeFirebase(applicationContext) }
         setContent {
             NookTheme {
                 val firebase by AppGraph.firebase.collectAsStateWithLifecycle()
                 val accountId by AppGraph.accounts(applicationContext).accountId.collectAsStateWithLifecycle()
+                val updateState by updates.state.collectAsStateWithLifecycle()
                 val sessionState = firebase.auth?.accounts?.state?.collectAsStateWithLifecycle()?.value
                 val localRepository = remember(accountId) { AppGraph.repository(applicationContext) }
                 val repository = sessionState?.repository ?: localRepository
@@ -83,10 +91,15 @@ class MainActivity : ComponentActivity() {
                 else Column(Modifier.fillMaxSize()) {
                     firebase.error?.let { Copy(it, Modifier.padding(16.dp)) }
                     if (!onboarded) Welcome { preferences.edit().putBoolean("onboarded", true).apply(); onboarded = true }
-                    else key(repository.accountId) { Nook(repository, intent.getStringExtra("page") ?: "Today", intent.getStringExtra("recordId")) }
+                    else key(repository.accountId) { Nook(repository, intent.getStringExtra("page") ?: "Today", intent.getStringExtra("recordId"), updates, updateState) }
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch(Dispatchers.IO) { UpdateManager.from(applicationContext).checkAutomatically() }
     }
 }
 
@@ -136,7 +149,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
-@Composable private fun Nook(repository: NookRepository, initialPage: String = "Today", initialRecord: String? = null) {
+@Composable private fun Nook(repository: NookRepository, initialPage: String = "Today", initialRecord: String? = null, updates: UpdateManager, updateState: UpdateUiState) {
     val records by repository.observeAll().collectAsStateWithLifecycle(initialValue = emptyList())
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -164,6 +177,14 @@ class MainActivity : ComponentActivity() {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) { Dot(); Heading("nook", 18) }
                 Text(if(selected?.kind == "capture" && selected.archived) "Archived" else if(selected?.kind == "capture") "${captures.indexOfFirst { it.id == selected.id } + 1} of ${captures.size}" else if(selected?.kind == "project") "${selected.value("progress").toDoubleOrNull()?.toInt() ?: 0}%" else if(page == "Inbox" && selected == null) "${captures.size} ${if(captures.size == 1) "item" else "items"}" else LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d")), fontFamily = Inter, fontSize = 12.sp, lineHeight = 18.sp, color = Secondary, modifier = Modifier.background(Elevated, RoundedCornerShape(14.dp)).padding(horizontal = 12.dp, vertical = 5.dp))
             }
+            UpdateBanner(
+                state = updateState,
+                onLater = updates::later,
+                onDownload = { scope.launch { updates.download() } },
+                onCancel = updates::cancelDownload,
+                onInstall = { scope.launch { updates.install() } },
+                onRetryCheck = { scope.launch { updates.checkManually() } }
+            )
             if (page != "Sync" && selected?.kind != "note") Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(1.dp)) {
                 Text(if(selected?.kind == "capture") "Clarify" else selected?.title() ?: if(page == "Today") "Good morning." else page, fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 30.sp, lineHeight = 42.sp, color = Text)
                 if(selected?.kind == "capture") Copy("What is this useful for?")
@@ -204,7 +225,7 @@ class MainActivity : ComponentActivity() {
                 "More", "Library" -> listOf("Resources", "Areas", "Calendar", "Search", "Archive", "Weekly review", "Reminders", "Settings").forEach { destination -> Action(destination) { page = destination } }
                 "Search" -> SearchScreen(repository, ::open)
                 "Calendar" -> CalendarScreen(active, repository, ::open, { success, work -> act(success, work) })
-                "Settings" -> DataSettings(repository, { page = "Sync" }) { success, work -> act(success, work) }
+                "Settings" -> DataSettings(repository, { page = "Sync" }, { success, work -> act(success, work) }, updates, updateState)
                 "Sync" -> { val firebase by AppGraph.firebase.collectAsStateWithLifecycle(); app.nook.integration.AccountControls(repository, firebase) { page = "Today" } }
                 "Reminders" -> app.nook.integration.RemindersScreen(repository, records) { success, work -> act(success, work) }
                 "Weekly review" -> app.nook.integration.WeeklyReviewScreen(repository, records, ::open, { page = "Inbox" }, { success, work -> act(success, work) })
@@ -263,14 +284,22 @@ private fun readLimited(input: java.io.InputStream, max: Int): ByteArray {
     return output.toByteArray()
 }
 
-@Composable private fun DataSettings(repository: NookRepository, openSync: () -> Unit, act: (String, suspend () -> Unit) -> Unit) {
+@Composable private fun DataSettings(repository: NookRepository, openSync: () -> Unit, act: (String, suspend () -> Unit) -> Unit, updates: UpdateManager, updateState: UpdateUiState) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val export = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri -> if(uri != null) act("Backup exported") { withContext(Dispatchers.IO) {
         val bytes = repository.exportBackup(); context.contentResolver.openOutputStream(uri)?.use { it.write(bytes) } ?: error("Could not open backup destination")
     } } }
     val restore = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if(uri != null) act("Backup restored") { withContext(Dispatchers.IO) {
         val bytes = context.contentResolver.openInputStream(uri)?.use { readLimited(it, 250 * 1024 * 1024) } ?: error("Backup unavailable"); repository.restoreBackup(bytes)
     } } }
+    AboutUpdatesCard(
+        state = updateState,
+        onCheck = { scope.launch { updates.checkManually() } },
+        onDownload = { scope.launch { updates.download() } },
+        onCancel = updates::cancelDownload,
+        onInstall = { scope.launch { updates.install() } }
+    )
     Panel { Heading("On this device", 18); Copy(if (repository.accountId.startsWith("local:")) "Local-only · saved locally" else "Sync enabled · saved locally"); Action("Sync", click = openSync); Copy("AI is optional. Capture and organization work offline.") }
     Panel { Heading("Data & Export", 18); Copy("Your notes, structured data and original attachments belong to you."); Action("Export Nook backup") { export.launch("nook-${LocalDate.now()}.zip") }; Action("Restore Nook backup") { restore.launch(arrayOf("application/zip", "application/octet-stream")) } }
     Panel { AiSettings(repository) }
