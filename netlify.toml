@@ -9,3 +9,5 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Rebuild after Firebase production environment configuration.
