@@ -32,6 +32,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -137,7 +138,9 @@ class MainActivity : ComponentActivity() {
     var learning by rememberSaveable { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().background(Background).safeDrawingPadding().padding(24.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) { Dot(); Heading("nook", 18) }
-        Spacer(Modifier.height(20.dp)); Heading("Everything on your mind has somewhere to belong.", 30)
+        Image(painter = painterResource(R.drawable.nook_mascot), contentDescription = "Nook's dormouse mascot",
+            modifier = Modifier.align(Alignment.CenterHorizontally).size(84.dp))
+        Heading("Everything on your mind has somewhere to belong.", 30)
         Copy("Capture first. Nook helps you clarify, connect and act later—without slowing you down.")
         Panel { Heading("Capture in seconds", 18); Copy("Text · tasks · links · screenshots") }
         Panel { Heading("Organize when ready", 18); Copy("Projects · Areas · Resources") }
