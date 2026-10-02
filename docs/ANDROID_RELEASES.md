@@ -99,6 +99,8 @@ Downloads use the app cache and AndroidX FileProvider `content://` URIs. Android
 4. The helper rejects a dirty/non-main/out-of-date branch and existing tags. It increments `versionCode`, updates `versionName`, runs Android unit tests and lint, assembles debug and signed release APKs, checks the package/version/signature, commits the version change, creates `v<VERSION>`, and pushes `main` plus the tag.
 5. The tag starts `.github/workflows/android-release.yml`. Check `gh run list --repo PandesalPanpan/Nook` and the run logs. The workflow publishes the signed APK and `update.json` only after every check passes.
 
+If a tag was created before the workflow was available, or its automatic run failed before a job started, open **Actions → Publish Android release → Run workflow** on `main`, enter the existing tag (for example `v0.2.0`), and run it. The workflow checks out and validates the tagged commit; it does not move or replace the tag.
+
 The first production release is `v0.2.0` with `versionCode = 2`. Future `versionCode` values increase by one; never reuse a code or overwrite a tag. Keep each release notes file in the source commit.
 
 ## Debug to release migration
