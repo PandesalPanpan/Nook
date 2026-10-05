@@ -37,8 +37,8 @@ android {
         applicationId = "app.nook"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5
-        versionName = "0.2.3"
+        versionCode = 6
+        versionName = "0.2.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "NOOK_RELEASE_CERT_SHA256", "\"$releaseCertificateSha256\"")
     }
