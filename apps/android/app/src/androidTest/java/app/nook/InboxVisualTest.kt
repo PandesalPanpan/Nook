@@ -34,7 +34,8 @@ class InboxVisualTest {
             }
             compose.onNodeWithText("Research ESP32 deep sleep").performClick()
             compose.waitUntil(5000) { compose.onAllNodesWithText("Clarify").fetchSemanticsNodes().isNotEmpty() }
-            compose.onNodeWithText("Assign to project · None").assertExists()
+            compose.onAllNodesWithText("Add to…").assertCountEquals(2)
+            compose.onNodeWithText("Optional. Choose one primary home.").assertExists()
         } finally { created.forEach { repository.delete(it) } }
     }
 }

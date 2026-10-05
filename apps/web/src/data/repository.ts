@@ -54,6 +54,14 @@ export class Repository {
     return (await this.db.records.where('[accountId+kind]').equals([this.accountId, kind]).toArray()).filter((r): r is Entity<K> => !r.deleted && r.kind === kind);
   }
   private async write(record: Entity): Promise<Entity> {
+    const versionTwoFields: Partial<Record<EntityKind, string[]>> = {
+      capture: ['originalBody', 'processedAt', 'processedIds', 'clarificationDraft'],
+      note: ['relatedIds', 'sourceCaptureId'],
+      task: ['resourceId', 'relatedIds', 'sourceCaptureId'],
+    };
+    if ((versionTwoFields[record.kind] ?? []).some(field => field in record.data)) {
+      record = {...record, schemaVersion: 2};
+    }
     parseEntity(record);
     if (record.kind === 'note' && !record.deleted && record.accountId === this.accountId) {
       const notes = [...(await this.list('note')).filter(note=>note.id!==record.id), record];
@@ -70,9 +78,9 @@ export class Repository {
     if (document) await this.db.search.put(document);
     else await this.db.search.delete([record.accountId, record.id]);
   }
-  async create<K extends EntityKind>(kind: K, data: Payloads[K], id: string = crypto.randomUUID()): Promise<Entity<K>> {
+  async create<K extends EntityKind>(kind: K, data: Payloads[K], id: string = crypto.randomUUID(), schemaVersion: 1 | 2 = 1): Promise<Entity<K>> {
     const now = Date.now();
-    let record = {id, accountId: this.accountId, clientId: this.clientId, schemaVersion: 1, kind, data, createdAt: now, updatedAt: now, deleted: false, archived: false} as Entity<K>;
+    let record = {id, accountId: this.accountId, clientId: this.clientId, schemaVersion, kind, data, createdAt: now, updatedAt: now, deleted: false, archived: false} as Entity<K>;
     await this.db.transaction('rw', this.db.records, this.db.outbox, this.db.search, async () => {
       if(await this.db.records.get([this.accountId,id])) throw new Error('Record identity already exists');
       record = await this.write(record) as Entity<K>;
@@ -138,23 +146,107 @@ export class Repository {
       }
     });
   }
-  async process(id: string, kind: 'task' | 'note' | 'project' | 'resource'): Promise<Entity> {
+  async clarify(id: string, input: {
+    mode: 'task' | 'note' | 'split'; body: string; action?: string; noteTitle?: string; noteBody?: string;
+    homeId?: string; doDate?: string; deadline?: string; relatedIds?: string[];
+  }): Promise<Entity[]> {
     return this.db.transaction('rw', this.db.records, this.db.outbox, this.db.files, this.db.search, async () => {
       const capture = await this.db.records.get([this.accountId, id]);
       if (!capture || capture.accountId !== this.accountId || capture.kind !== 'capture' || capture.deleted) throw new Error('Capture unavailable');
-      const body = capture.data.body;
-      let result: Entity;
-      if (kind === 'task') result = await this.create('task', {title: body, completed: false});
-      else if (kind === 'note') result = await this.create('note', {title: '', body, attachmentIds: capture.data.attachmentIds});
-      else if (kind === 'project') result = await this.create('project', {title: body, outcome: '', progress: 0});
-      else result = await this.create('resource', {title: body, description: '', ...(capture.data.captureType === 'link' ? {url: body} : {})});
+      if (capture.data.processedAt !== undefined) {
+        const results = await Promise.all((capture.data.processedIds ?? []).map(resultId => this.db.records.get([this.accountId, resultId])));
+        const available = results.filter((result): result is Entity => !!result && !result.deleted);
+        if (available.length) return available;
+        throw new Error('This capture was already processed and its results are unavailable');
+      }
+      const body = input.body;
+      if (!body.trim() && capture.data.attachmentIds.length === 0) throw new Error('Add a thought before saving');
+      let home: Entity | undefined;
+      if (input.homeId) {
+        home = await this.db.records.get([this.accountId, input.homeId]);
+        if (!home || home.accountId !== this.accountId || home.deleted || home.archived || !['project', 'area', 'resource'].includes(home.kind)) throw new Error('Choose an active Project, Area, or Resource');
+      }
+      const relatedIds = [...new Set(input.relatedIds ?? [])];
+      for (const relatedId of relatedIds) {
+        if (!relatedId || relatedId === id) throw new Error('An item cannot be connected to itself');
+        const target = await this.db.records.get([this.accountId, relatedId]);
+        if (!target || target.accountId !== this.accountId || target.deleted || target.archived || !['task', 'note', 'dailyNote', 'project', 'area', 'resource'].includes(target.kind)) throw new Error('A connected item is unavailable');
+      }
+      const homeFields = home ? home.kind === 'project' ? {projectId:home.id} : home.kind === 'area' ? {areaId:home.id} : {resourceId:home.id} : {};
+      const results: Entity[] = [];
+      const makeId = (role: string) => `clarify-${capture.id}-${role}`;
+      const existingOrCreate = async <K extends 'task' | 'note'>(kind: K, data: Payloads[K], resultId: string): Promise<Entity<K>> => {
+        const previous = await this.db.records.get([this.accountId, resultId]);
+        if (previous) {
+          if (previous.kind === kind && previous.data.sourceCaptureId === capture.id && !previous.deleted) return previous as Entity<K>;
+          throw new Error('A previous clarification result is unavailable; it was not recreated');
+        }
+        return this.create(kind, data, resultId, 2);
+      };
+      if (input.mode === 'task') {
+        const taskId = makeId('task');
+        results.push(await existingOrCreate('task', {
+          title: body.trim() || 'Review photo capture', completed: false, ...(input.doDate ? {doDate:input.doDate} : {}), ...(input.deadline ? {deadline:input.deadline} : {}),
+          ...homeFields, relatedIds, sourceCaptureId:capture.id,
+        }, taskId));
+      } else {
+        const noteId = makeId('note');
+        const noteTitle = (input.noteTitle?.trim() || body.split(/\r?\n/, 1)[0]?.trim() || body.trim() || 'Photo capture').slice(0, 10000);
+        const noteBody = input.noteBody ?? body;
+        const note = await existingOrCreate('note', {
+          title: noteTitle, body: noteBody, attachmentIds:capture.data.attachmentIds,
+          ...homeFields, relatedIds: input.mode === 'split' ? [...new Set([...relatedIds, makeId('task')])] : relatedIds,
+          sourceCaptureId:capture.id,
+        }, noteId);
+        results.push(note);
+        if (input.mode === 'split') {
+          const action = input.action?.trim();
+          if (!action) throw new Error('Add an action for the linked Task');
+          const taskId = makeId('task');
+          results.push(await existingOrCreate('task', {
+            title:action, completed:false, ...(input.doDate ? {doDate:input.doDate} : {}), ...(input.deadline ? {deadline:input.deadline} : {}),
+            ...homeFields, relatedIds:[...new Set([...relatedIds, noteId])], sourceCaptureId:capture.id,
+          }, taskId));
+        }
+      }
       for (const attachmentId of capture.data.attachmentIds) {
         const attachment = await this.db.records.get([this.accountId, attachmentId]);
         if (attachment?.kind === 'attachment' && !attachment.deleted) {
-          await this.update(attachmentId, r => r.kind === 'attachment' ? {...r, data: {...r.data, ownerId: result.id}} : r);
+          await this.update(attachmentId, r => r.kind === 'attachment' ? {...r, data: {...r.data, ownerId: results.find(item=>item.kind==='note')?.id ?? results[0].id}} : r);
         }
       }
-      await this.remove(id);
+      const now = Date.now();
+      const processed = {...capture, schemaVersion:2 as const, updatedAt:Math.max(now, capture.updatedAt + 1), data:{...capture.data,
+        body, originalBody:capture.data.originalBody ?? capture.data.body, processedAt:now, processedIds:results.map(result=>result.id)}};
+      await this.write(processed);
+      return results;
+    });
+  }
+  async process(id: string, kind: 'task' | 'note' | 'project' | 'resource'): Promise<Entity> {
+    if (kind === 'task' || kind === 'note') {
+      const capture = await this.db.records.get([this.accountId, id]);
+      if (!capture || capture.kind !== 'capture') throw new Error('Capture unavailable');
+      return (await this.clarify(id, {mode:kind, body:capture.data.body}))[0];
+    }
+    return this.db.transaction('rw', this.db.records, this.db.outbox, this.db.files, this.db.search, async () => {
+      const capture = await this.db.records.get([this.accountId, id]);
+      if (!capture || capture.accountId !== this.accountId || capture.kind !== 'capture' || capture.deleted) throw new Error('Capture unavailable');
+      if (capture.data.processedAt !== undefined) {
+        const result = capture.data.processedIds?.map(resultId => this.db.records.get([this.accountId,resultId]));
+        const available = result ? (await Promise.all(result)).find((item): item is Entity => !!item && !item.deleted) : undefined;
+        if (available) return available;
+        throw new Error('This capture was already processed and its results are unavailable');
+      }
+      const resultId = `clarify-${capture.id}-${kind}`;
+      const result = kind === 'project'
+        ? await this.create('project', {title:capture.data.body, outcome:'', progress:0}, resultId, 1)
+        : await this.create('resource', {title:capture.data.body, description:'', ...(capture.data.captureType === 'link' ? {url:capture.data.body} : {})}, resultId, 1);
+      for (const attachmentId of capture.data.attachmentIds) {
+        const attachment = await this.db.records.get([this.accountId, attachmentId]);
+        if (attachment?.kind === 'attachment' && !attachment.deleted) await this.update(attachmentId,r=>r.kind==='attachment'?{...r,data:{...r.data,ownerId:result.id}}:r);
+      }
+      const now = Date.now();
+      await this.write({...capture,schemaVersion:2,updatedAt:Math.max(now,capture.updatedAt+1),data:{...capture.data,originalBody:capture.data.originalBody??capture.data.body,processedAt:now,processedIds:[result.id]}});
       return result;
     });
   }

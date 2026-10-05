@@ -42,31 +42,43 @@ class WidgetRenderTest {
     @Test fun allFiveWidgetsRenderRealLocalRecords() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val instrumentation = InstrumentationRegistry.getInstrumentation()
-        val session = context.getSharedPreferences("nook-session", Context.MODE_PRIVATE)
-        val previous = session.getString("accountId", null)
-        session.edit().putString("accountId", "local:widgets-${UUID.randomUUID()}").commit()
+        AppGraph.initializeFirebase(context)
+        val repository = AppGraph.activeRepository(context)
+        assertTrue("widget fixtures must use the app's offline namespace", repository.accountId.startsWith("local:"))
+        val createdIds = mutableListOf<String>()
+        val widgetPreferences = context.getSharedPreferences("nook-widgets", Context.MODE_PRIVATE)
+        var widgetKey: String? = null
+        var previousWidgetTarget: String? = null
         val host = AppWidgetHost(context, 70132)
         // MediaStore retains screenshots across APK reinstalls. A per-run folder
         // prevents exhausting its numbered duplicate-filename fallback.
         val artifactDirectory = Environment.DIRECTORY_DOWNLOADS + "/NookVisual/" + UUID.randomUUID()
         var projectWidgetId: Int? = null
         try {
-            val repository = AppGraph.repository(context)
-            repository.capture("Research ESP32 deep sleep")
-            repository.capture("Send assessment follow-up")
+            createdIds += repository.capture("Research ESP32 deep sleep").id
+            createdIds += repository.capture("Send assessment follow-up").id
             val project = repository.create("project", wireJson.encodeToJsonElement(Project("Classroom Management System", progress = 64.0, targetDate = "2026-10-18")) as JsonObject)
+            createdIds += project.id
             val recurrence = repository.create("recurrence", wireJson.encodeToJsonElement(Recurrence("daily", anchorDate = LocalDate.now().toString())) as JsonObject)
+            createdIds += recurrence.id
             val task = repository.create("task", wireJson.encodeToJsonElement(Task("Finish ESP32 display prototype", doDate = LocalDate.now().toString(), deadline = LocalDate.now().plusDays(2).toString(), projectId = project.id, recurrenceId = recurrence.id)) as JsonObject)
+            createdIds += task.id
             repository.update(project.id) { it.copy(data = wireJson.encodeToJsonElement(Project("Classroom Management System", progress = 64.0, targetDate = "2026-10-18", nextActionId = task.id)) as JsonObject) }
             val undated = repository.create("task", wireJson.encodeToJsonElement(Task("Undated next step")) as JsonObject)
+            createdIds += undated.id
             repository.create("project", wireJson.encodeToJsonElement(Project("Undated outcome", nextActionId = undated.id)) as JsonObject)
+                .also { createdIds += it.id }
             val hidden = repository.create("task", wireJson.encodeToJsonElement(Task("Archived outcome step")) as JsonObject)
+            createdIds += hidden.id
             val archived = repository.create("project", wireJson.encodeToJsonElement(Project("Archived outcome", nextActionId = hidden.id)) as JsonObject)
+            createdIds += archived.id
             repository.archive(archived.id, true)
             ParcelFileDescriptor.AutoCloseInputStream(instrumentation.uiAutomation.executeShellCommand("appwidget grantbind --package app.nook --user 0")).use { it.readBytes() }
             projectWidgetId = host.allocateAppWidgetId()
             assertTrue(AppWidgetManager.getInstance(context).bindAppWidgetIdIfAllowed(projectWidgetId, ComponentName(context, ProjectWidgetReceiver::class.java)))
-            context.getSharedPreferences("nook-widgets", Context.MODE_PRIVATE).edit().putString("${repository.accountId}:$projectWidgetId", project.id).commit()
+            widgetKey = "${repository.accountId}:$projectWidgetId"
+            previousWidgetTarget = widgetPreferences.getString(widgetKey, null)
+            widgetPreferences.edit().putString(widgetKey, project.id).commit()
             val fixtures = listOf(
                 Triple("capture", CaptureWidget(), DpSize(128.dp, 128.dp)),
                 Triple("quick", QuickCaptureWidget(), DpSize(286.dp, 128.dp)),
@@ -96,7 +108,7 @@ class WidgetRenderTest {
                 when(name) {
                     "capture" -> assertTrue(text.contains("Capture"))
                     "quick" -> assertTrue(text.contains("What’s on your mind?"))
-                    "inbox" -> assertTrue(text.contains("Research ESP32 deep sleep"))
+                    "inbox" -> assertTrue("inbox widget text: $text", text.contains("Research ESP32 deep sleep"))
                     "today" -> {
                         assertTrue(text.contains("Finish ESP32 display prototype"))
                         assertTrue(text.contains("2 things worth doing"))
@@ -142,7 +154,12 @@ class WidgetRenderTest {
 
         } finally {
             projectWidgetId?.let { host.deleteAppWidgetId(it) }
-            if(previous == null) session.edit().remove("accountId").commit() else session.edit().putString("accountId", previous).commit()
+            widgetKey?.let { key ->
+                val editor = widgetPreferences.edit()
+                if(previousWidgetTarget == null) editor.remove(key) else editor.putString(key, previousWidgetTarget)
+                editor.commit()
+            }
+            createdIds.asReversed().forEach { id -> repository.get(id)?.takeIf { !it.deleted }?.let { repository.delete(id) } }
         }
     }
 }

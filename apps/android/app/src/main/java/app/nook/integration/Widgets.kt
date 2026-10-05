@@ -63,13 +63,22 @@ abstract class NookWidget(private val kind: String) : GlanceAppWidget() {
             val compact = size.height < 110.dp
             val largeText = context.resources.configuration.fontScale > 1.3f
             val quickGrid = kind == "quick" && (compact || largeText)
-            val padding = if(quickGrid) 0 else if(kind == "capture") 8 else if(kind == "project" && size.height < 210.dp) 12 else 16
+            val padding = when {
+                quickGrid -> 0
+                kind == "capture" -> 8
+                kind == "project" && size.height < 210.dp -> 12
+                kind == "today" && size.height < 200.dp -> 8
+                else -> 16
+            }
             val root = GlanceModifier.fillMaxSize().background(ImageProvider(if(kind == "capture") R.drawable.widget_capture else R.drawable.widget_surface)).cornerRadius(28.dp).padding(padding.dp)
             when(kind) {
                 "capture" -> Column(root.clickable(capture(context)), horizontalAlignment = Alignment.Horizontal.CenterHorizontally, verticalAlignment = Alignment.Vertical.CenterVertically) {
-                    val plusSize = if(largeText && size.height < 88.dp) 20 else if(size.height < 88.dp) 28 else 36
+                    val contentHeight = (size.height.value - padding * 2).coerceAtLeast(0f)
+                    val plusCandidates = if(size.height < 88.dp) (24 downTo 16 step 2) else (36 downTo 18 step 2)
+                    val plusSize = plusCandidates.firstOrNull { widgetTextHeight(context, it) + widgetTextHeight(context, 12) + 4 <= contentHeight } ?: plusCandidates.last()
+                    val showLabel = widgetTextHeight(context, plusSize) + widgetTextHeight(context, 12) + 4 <= contentHeight
                     Label("+", plusSize, color = Color(0xff171412), description = "Quick capture")
-                    if(size.height.value >= widgetTextHeight(context, plusSize) + widgetTextHeight(context, 12) + 16) Label("Capture", 12, true, color = Color(0xff171412))
+                    if(showLabel) Label("Capture", 12, true, color = Color(0xff171412))
                 }
                 "quick" -> Column(root, verticalAlignment = Alignment.Vertical.CenterVertically) {
                     if(quickGrid) {
@@ -106,13 +115,17 @@ abstract class NookWidget(private val kind: String) : GlanceAppWidget() {
                 }
                 "today" -> Column(root) {
                     val headingHeight = max(44f, widgetTextHeight(context, 18))
+                    val compactLargeTextRow = largeText && size.height < 200.dp
                     Label("Today", 18, true, GlanceModifier.height(headingHeight.dp).clickable(open(context))); Label("${due.size} ${if(due.size == 1) "thing" else "things"} worth doing", 11, color = Secondary)
                     Spacer(GlanceModifier.height(8.dp))
-                    val rowHeight = max(44f, widgetTextHeight(context, 13) + widgetTextHeight(context, 11))
+                    val rowHeight = max(44f, widgetTextHeight(context, 13) + if(compactLargeTextRow) 0f else widgetTextHeight(context, 11))
                     val rows = floor((size.height.value - padding * 2 - headingHeight - widgetTextHeight(context, 11) - 8) / rowHeight).toInt().coerceIn(0, if(size.height < 200.dp) 2 else 3)
                     due.take(rows).forEach { task -> Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.Vertical.CenterVertically) {
                         CheckBox(false, actionRunCallback<CompleteTaskAction>(actionParametersOf(TaskId to task.id, AccountId to repository.accountId)), modifier = GlanceModifier.size(44.dp), colors = CheckboxDefaults.colors(checkedColor = ColorProvider(Blue), uncheckedColor = ColorProvider(Color(0xff9c9187))))
-                        Column(GlanceModifier.defaultWeight().height(rowHeight.dp).clickable(open(context, "Projects", task.id))) { Label(task.title(), 13, true); Label(todayActionDetail(task, today, (task.accountId to task.id) in nextActions), 11, color = Secondary) }
+                        Column(GlanceModifier.defaultWeight().height(rowHeight.dp).clickable(open(context, "Projects", task.id))) {
+                            Label(task.title(), 13, true)
+                            if(!compactLargeTextRow) Label(todayActionDetail(task, today, (task.accountId to task.id) in nextActions), 11, color = Secondary)
+                        }
                     } }
                     if(due.isEmpty()) Label("No scheduled actions. Capture when ready.", 12, color = Secondary)
                 }

@@ -1,11 +1,12 @@
 export type EntityKind = 'capture' | 'note' | 'task' | 'project' | 'area' | 'resource' | 'attachment' | 'dailyNote' | 'reminder' | 'recurrence' | 'noteLink' | 'settings' | 'profile';
 export interface BaseRecord {
-  id: string; accountId: string; schemaVersion: 1; createdAt: number; updatedAt: number;
+  id: string; accountId: string; schemaVersion: 1 | 2; createdAt: number; updatedAt: number;
   clientId: string; deleted: boolean; archived: boolean;
 }
-export interface Capture { body: string; captureType: 'text' | 'task' | 'link' | 'image'; attachmentIds: string[] }
-export interface Note { title: string; body: string; projectId?: string; areaId?: string; resourceId?: string; attachmentIds: string[] }
-export interface Task { title: string; completed: boolean; doDate?: string; deadline?: string; reminderId?: string; recurrenceId?: string; projectId?: string; areaId?: string; parentTaskId?: string }
+export interface ClarificationDraft { mode: 'task' | 'note' | 'split'; action: string; noteTitle: string; noteBody: string; homeId?: string; doDate?: string; deadline?: string; relatedIds: string[] }
+export interface Capture { body: string; captureType: 'text' | 'task' | 'link' | 'image'; attachmentIds: string[]; originalBody?: string; processedAt?: number; processedIds?: string[]; clarificationDraft?: ClarificationDraft }
+export interface Note { title: string; body: string; projectId?: string; areaId?: string; resourceId?: string; attachmentIds: string[]; relatedIds?: string[]; sourceCaptureId?: string }
+export interface Task { title: string; completed: boolean; doDate?: string; deadline?: string; reminderId?: string; recurrenceId?: string; projectId?: string; areaId?: string; resourceId?: string; parentTaskId?: string; relatedIds?: string[]; sourceCaptureId?: string }
 export interface Project { title: string; outcome: string; targetDate?: string; progress: number; areaId?: string; nextActionId?: string }
 export interface Area { title: string; responsibility: string; standards: string }
 export interface Resource { title: string; description: string; url?: string; projectId?: string; areaId?: string }

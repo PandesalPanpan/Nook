@@ -69,10 +69,9 @@ private fun Record.noteValue(key: String) = data[key]?.jsonPrimitive?.contentOrN
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).semantics { contentDescription = "Title" }, decorationBox = { input ->
                 Box { if(value("title").isEmpty()) NoteText("Untitled note", 24, true, Color(0xff9c9187)); input() }
             })
-        val context = listOf("resourceId" to "Resource", "projectId" to "Project", "areaId" to "Area").firstNotNullOfOrNull { (key, label) ->
-            available.find { it.id == value(key) && !it.archived && it.kind == label.lowercase() }?.let { "$label · ${it.noteValue("title")}" }
-        }
-        if(context != null) NoteText(context.uppercase(), 10, true, Color(0xffff7e1d))
+        val explicitHomes = listOf("projectId" to "Project", "areaId" to "Area", "resourceId" to "Resource").filter { (key, _) -> value(key).isNotBlank() }
+        val context = explicitHomes.singleOrNull()?.let { (key, label) -> available.find { it.id == value(key) && !it.archived && it.kind == label.lowercase() }?.let { "$label · ${it.noteValue("title")}" } }
+        if(context != null) NoteText(context.uppercase(), 10, true, Color(0xffff7e1d)) else if(explicitHomes.size > 1) NoteText("MULTIPLE ASSOCIATIONS", 10, true, Color(0xffff7e1d))
     }
     NoteEditor(value("body"), { field("body", it) }, notes.filter { it.id != record.id }, openSaved,
         initialPreview = value("body").isNotBlank(), onAttach = onAttach, attachmentBusy = attachmentBusy, footer = {
@@ -96,8 +95,9 @@ private fun Record.noteValue(key: String) = data[key]?.jsonPrimitive?.contentOrN
         Text(if(details) "Hide note details" else "Note details")
     }
     if(details) Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        for((key, label) in listOf("projectId" to "Project", "areaId" to "Area", "resourceId" to "Resource"))
-            RecordContextPicker(label, value(key), available.filter { it.kind == label.lowercase() && !it.archived }) { optional(key, it) }
+        RecordPrimaryHomePicker(available, record.accountId, value("projectId"), value("areaId"), value("resourceId"), repository) { project, area, resource ->
+            optional("projectId", project); optional("areaId", area); optional("resourceId", resource)
+        }
         NoteText("Saved on this device. Context changes are included when you save.", 12, color = Color(0xffcbbfb4))
     }
 }

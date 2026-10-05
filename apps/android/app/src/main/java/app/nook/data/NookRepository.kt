@@ -20,13 +20,20 @@ class NookRepository(val db: NookDatabase, val accountId: String, val clientId: 
     fun observe(kind: String) = dao.observe(accountId, kind).map { rows -> rows.map { it.decode() } }
     suspend fun get(id: String) = dao.get(accountId, id)?.decode()
     internal suspend fun write(record: Record): Record {
-        validate(record)
-        require(record.accountId == accountId)
-        val saved = if(record.kind == "note" && !record.deleted) {
-            val notes = dao.byKinds(accountId, listOf("note")).map { it.decode() }.filter { !it.deleted && it.id != record.id } + record
-            val body = record.data["body"]!!.jsonPrimitive.content
-            record.copy(data = JsonObject(record.data + ("body" to JsonPrimitive(stabilizeNoteLinks(body, notes)))))
-        } else record
+        val extensions = when(record.kind) {
+            "capture" -> setOf("originalBody", "processedAt", "processedIds", "clarificationDraft")
+            "note" -> setOf("relatedIds", "sourceCaptureId")
+            "task" -> setOf("resourceId", "relatedIds", "sourceCaptureId")
+            else -> emptySet()
+        }
+        val versioned = if(record.data.keys.any { it in extensions }) record.copy(schemaVersion = 2) else record
+        validate(versioned)
+        require(versioned.accountId == accountId)
+        val saved = if(versioned.kind == "note" && !versioned.deleted) {
+            val notes = dao.byKinds(accountId, listOf("note")).map { it.decode() }.filter { !it.deleted && it.id != versioned.id } + versioned
+            val body = versioned.data["body"]!!.jsonPrimitive.content
+            versioned.copy(data = JsonObject(versioned.data + ("body" to JsonPrimitive(stabilizeNoteLinks(body, notes)))))
+        } else versioned
         validate(saved)
         dao.put(saved.store())
         index(saved)
@@ -37,10 +44,10 @@ class NookRepository(val db: NookDatabase, val accountId: String, val clientId: 
         dao.unindex(record.accountId, record.id)
         searchable(record)?.let { dao.index(SearchRow(record.accountId, record.id, it)) }
     }
-    suspend fun create(kind: String, data: JsonObject, id: String = UUID.randomUUID().toString()): Record = db.withTransaction {
+    suspend fun create(kind: String, data: JsonObject, id: String = UUID.randomUUID().toString(), schemaVersion: Int = 1): Record = db.withTransaction {
         require(get(id) == null) { "Record identity already exists" }
         val now = clock()
-        val record = Record(id, accountId, kind, data, createdAt = now, updatedAt = now, clientId = clientId)
+        val record = Record(id, accountId, kind, data, schemaVersion = schemaVersion, createdAt = now, updatedAt = now, clientId = clientId)
         write(record)
     }
     suspend fun capture(body: String, type: String = "text"): Record {
@@ -65,7 +72,7 @@ class NookRepository(val db: NookDatabase, val accountId: String, val clientId: 
         val previous = requireNotNull(get(id)) { "Record unavailable" }
         check(!previous.deleted) { "Record deleted" }
         val proposed = change(previous)
-        val result = write(proposed.copy(id = previous.id, accountId = accountId, kind = previous.kind, schemaVersion = previous.schemaVersion,
+        val result = write(proposed.copy(id = previous.id, accountId = accountId, kind = previous.kind, schemaVersion = maxOf(previous.schemaVersion, proposed.schemaVersion),
             createdAt = previous.createdAt, updatedAt = maxOf(clock(), previous.updatedAt + 1), clientId = clientId))
         if(previous.kind == "task" && result.kind == "task" && !result.deleted && !result.archived) {
             val before = wireJson.decodeFromJsonElement(Task.serializer(), previous.data)
@@ -115,29 +122,121 @@ class NookRepository(val db: NookDatabase, val accountId: String, val clientId: 
         deleted
     }
     suspend fun archive(id: String, archived: Boolean) = update(id) { it.copy(archived = archived) }
-    suspend fun process(id: String, destination: String, projectId: String? = null): Record = db.withTransaction {
-        val record = requireNotNull(get(id))
-        check(record.kind == "capture" && !record.deleted) { "Capture unavailable" }
-        val capture = wireJson.decodeFromJsonElement(Capture.serializer(), record.data)
-        if(projectId != null) {
-            require(destination in listOf("task", "note", "resource")) { "Only tasks, notes and resources belong to a project" }
-            val project = get(projectId)
-            require(project != null && project.kind == "project" && !project.deleted && !project.archived) { "Project unavailable" }
+    suspend fun saveClarificationDraft(id: String, body: String, draft: ClarificationDraft): Record = update(id) { current ->
+        require(current.kind == "capture" && !current.deleted) { "Capture unavailable" }
+        val capture = wireJson.decodeFromJsonElement(Capture.serializer(), current.data)
+        current.copy(schemaVersion = 2, data = wireJson.encodeToJsonElement(capture.copy(
+            body = body,
+            originalBody = capture.originalBody ?: capture.body.takeIf { body != it },
+            clarificationDraft = draft,
+        )) as JsonObject)
+    }
+
+    suspend fun clarify(
+        id: String, body: String, mode: String, action: String = "", noteTitle: String = "", noteBody: String = body,
+        homeId: String? = null, doDate: String? = null, deadline: String? = null, relatedIds: List<String> = emptyList(),
+    ): List<Record> = db.withTransaction {
+        val source = requireNotNull(get(id)) { "Capture unavailable" }
+        check(source.kind == "capture" && !source.deleted) { "Capture unavailable" }
+        val capture = wireJson.decodeFromJsonElement(Capture.serializer(), source.data)
+        if(capture.processedAt != null) {
+            val existing = capture.processedIds.orEmpty().mapNotNull { resultId -> get(resultId)?.takeIf { !it.deleted } }
+            check(existing.isNotEmpty()) { "This capture was already processed and its results are unavailable" }
+            return@withTransaction existing
         }
-        val payload = when (destination) {
-            "task" -> wireJson.encodeToJsonElement(Task(capture.body))
-            "note" -> wireJson.encodeToJsonElement(Note(body = capture.body, attachmentIds = capture.attachmentIds))
-            "project" -> wireJson.encodeToJsonElement(Project(capture.body))
-            "resource" -> wireJson.encodeToJsonElement(Resource(capture.body, url = if (capture.captureType == "link") capture.body else null))
-            else -> error("Unsupported destination")
+        require(body.isNotBlank() || capture.attachmentIds.isNotEmpty()) { "Add a thought before saving" }
+        require(mode in setOf("task", "note", "split")) { "Choose Task, Note, or Split" }
+        if(mode == "split") require(action.isNotBlank()) { "Add an action for the linked Task" }
+        val home = homeId?.let { homeKey ->
+            val target = requireNotNull(get(homeKey)) { "Choose an active Project, Area, or Resource" }
+            require(target.accountId == accountId && !target.deleted && !target.archived && target.kind in setOf("project", "area", "resource")) { "Choose an active Project, Area, or Resource" }
+            target
         }
-        val result = create(destination, (payload as JsonObject).let { if(projectId == null) it else JsonObject(it + ("projectId" to JsonPrimitive(projectId))) })
-        capture.attachmentIds.forEach { attachmentId -> update(attachmentId) { attachment ->
-            val data = wireJson.decodeFromJsonElement(Attachment.serializer(), attachment.data)
-            attachment.copy(data = wireJson.encodeToJsonElement(data.copy(ownerId = result.id)) as JsonObject)
-        } }
-        delete(id)
-        result
+        val cleanRelated = relatedIds.distinct()
+        cleanRelated.forEach { relatedId ->
+            require(relatedId != id) { "An item cannot be connected to itself" }
+            val target = get(relatedId)
+            require(target != null && target.accountId == accountId && !target.deleted && !target.archived && target.kind in setOf("task", "note", "dailyNote", "project", "area", "resource")) { "A connected item is unavailable" }
+        }
+        val homeField = when(home?.kind) { "project" -> "projectId"; "area" -> "areaId"; "resource" -> "resourceId"; else -> null }
+        val homeData = if(home != null && homeField != null) mapOf(homeField to JsonPrimitive(home.id)) else emptyMap()
+        val allResults = mutableListOf<Record>()
+        fun resultId(role: String) = "clarify-${source.id}-$role"
+        suspend fun <T> createOrReuse(kind: String, resultId: String, payload: T, serializer: kotlinx.serialization.KSerializer<T>): Record {
+            val previous = get(resultId)
+            if(previous != null) {
+                check(previous.kind == kind && previous.data["sourceCaptureId"] == JsonPrimitive(source.id) && !previous.deleted) { "A previous clarification result is unavailable; it was not recreated" }
+                return previous
+            }
+            val data = wireJson.encodeToJsonElement(serializer, payload) as JsonObject
+            return create(kind, data, resultId, 2)
+        }
+        if(mode == "task") {
+            val taskData = wireJson.encodeToJsonElement(Task(body.trim().ifBlank { "Review photo capture" }, doDate = doDate?.takeIf { it.isNotBlank() }, deadline = deadline?.takeIf { it.isNotBlank() }, resourceId = home?.id?.takeIf { home.kind == "resource" }, relatedIds = cleanRelated, sourceCaptureId = source.id)) as JsonObject
+            allResults += createOrReuse("task", resultId("task"), JsonObject(taskData + homeData), JsonObject.serializer())
+        } else {
+            val title = noteTitle.trim().ifBlank { body.lineSequence().firstOrNull()?.trim().orEmpty().ifBlank { body.trim().ifBlank { "Photo capture" } } }.take(10000)
+            val linkedTaskId = resultId("task")
+            val noteLinks = (cleanRelated + if(mode == "split") listOf(linkedTaskId) else emptyList()).distinct()
+            val noteData = wireJson.encodeToJsonElement(Note(title, noteBody, resourceId = home?.id?.takeIf { home.kind == "resource" }, attachmentIds = capture.attachmentIds, relatedIds = noteLinks, sourceCaptureId = source.id)) as JsonObject
+            allResults += createOrReuse("note", resultId("note"), JsonObject(noteData + homeData), JsonObject.serializer())
+            if(mode == "split") {
+                val taskLinks = (cleanRelated + resultId("note")).distinct()
+                val taskData = wireJson.encodeToJsonElement(Task(action.trim().ifBlank { "Review photo capture" }, doDate = doDate?.takeIf { it.isNotBlank() }, deadline = deadline?.takeIf { it.isNotBlank() }, resourceId = home?.id?.takeIf { home.kind == "resource" }, relatedIds = taskLinks, sourceCaptureId = source.id)) as JsonObject
+                allResults += createOrReuse("task", linkedTaskId, JsonObject(taskData + homeData), JsonObject.serializer())
+            }
+        }
+        val noteId = allResults.firstOrNull { it.kind == "note" }?.id
+        for(attachmentId in capture.attachmentIds) {
+            val attachment = get(attachmentId)
+            if(attachment?.kind == "attachment" && !attachment.deleted) update(attachmentId) { current ->
+                val data = wireJson.decodeFromJsonElement(Attachment.serializer(), current.data)
+                current.copy(data = wireJson.encodeToJsonElement(data.copy(ownerId = noteId ?: allResults.first().id)) as JsonObject)
+            }
+        }
+        val processedAt = maxOf(clock(), source.createdAt)
+        update(id) { current ->
+            val latest = wireJson.decodeFromJsonElement(Capture.serializer(), current.data)
+            current.copy(schemaVersion = 2, data = wireJson.encodeToJsonElement(latest.copy(
+                body = body, originalBody = latest.originalBody ?: latest.body, processedAt = processedAt,
+                processedIds = allResults.map { it.id }, clarificationDraft = null,
+            )) as JsonObject)
+        }
+        allResults
+    }
+
+    suspend fun process(id: String, destination: String, projectId: String? = null): Record {
+        if(destination == "task" || destination == "note") {
+            val source = requireNotNull(get(id)) { "Capture unavailable" }
+            check(source.kind == "capture" && !source.deleted) { "Capture unavailable" }
+            val capture = wireJson.decodeFromJsonElement(Capture.serializer(), source.data)
+            return clarify(id, capture.body, destination, homeId = projectId).first()
+        }
+        return db.withTransaction {
+            val source = requireNotNull(get(id)) { "Capture unavailable" }
+            check(source.kind == "capture" && !source.deleted) { "Capture unavailable" }
+            val capture = wireJson.decodeFromJsonElement(Capture.serializer(), source.data)
+            if(capture.processedAt != null) {
+                val existing = capture.processedIds.orEmpty().mapNotNull { get(it)?.takeIf { record -> !record.deleted } }.firstOrNull()
+                return@withTransaction requireNotNull(existing) { "This capture was already processed and its results are unavailable" }
+            }
+            require(destination in setOf("project", "resource")) { "Unsupported destination" }
+            val recordId = "clarify-${source.id}-$destination"
+            val payload: JsonObject = if(destination == "project") wireJson.encodeToJsonElement(Project(capture.body)) as JsonObject
+                else wireJson.encodeToJsonElement(Resource(capture.body, url = if(capture.captureType == "link") capture.body else null)) as JsonObject
+            val result = get(recordId)?.also { check(it.kind == destination && !it.deleted) { "A previous clarification result is unavailable; it was not recreated" } }
+                ?: create(destination, payload, recordId)
+            capture.attachmentIds.forEach { attachmentId -> update(attachmentId) { attachment ->
+                val data = wireJson.decodeFromJsonElement(Attachment.serializer(), attachment.data)
+                attachment.copy(data = wireJson.encodeToJsonElement(data.copy(ownerId = result.id)) as JsonObject)
+            } }
+            val processedAt = maxOf(clock(), source.createdAt)
+            update(id) { current ->
+                val latest = wireJson.decodeFromJsonElement(Capture.serializer(), current.data)
+                current.copy(schemaVersion = 2, data = wireJson.encodeToJsonElement(latest.copy(originalBody = latest.originalBody ?: latest.body, processedAt = processedAt, processedIds = listOf(result.id), clarificationDraft = null)) as JsonObject)
+            }
+            result
+        }
     }
     suspend fun receive(remote: Record) = db.withTransaction {
         validate(remote)

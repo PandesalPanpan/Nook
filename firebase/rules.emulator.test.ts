@@ -47,6 +47,15 @@ test('malformed data and hidden credential fields are rejected', async () => {
   await assertFails(setDoc(reference, {...record(), data: {...record().data, apiKey: 'must-not-sync'}}));
   await assertFails(setDoc(reference, {...record(), updatedAt: -1}));
 });
+test('schema V2 permits clarified Task homes and processed capture history while V1 stays strict', async()=>{
+  const db=environment.authenticatedContext('alice').firestore();
+  const task={...record(),id:'task-v2',kind:'task',data:{title:'Replace the bulb',completed:false,resourceId:'resource-1',relatedIds:['note-1'],sourceCaptureId:'capture-1'}};
+  await assertFails(setDoc(doc(db,'users/alice/records/task-v2'),task));
+  await assertSucceeds(setDoc(doc(db,'users/alice/records/task-v2'),{...task,schemaVersion:2}));
+  const capture={...record(),id:'capture-v2',kind:'capture',schemaVersion:2,data:{body:'Edited wording',captureType:'text',attachmentIds:[],originalBody:'Original wording',processedAt:2,processedIds:['note-1','task-v2'],clarificationDraft:{mode:'split',action:'Replace the bulb',noteTitle:'Lighting',noteBody:'Warm lights',homeId:'resource-1',relatedIds:[]}}};
+  await assertSucceeds(setDoc(doc(db,'users/alice/records/capture-v2'),capture));
+  await assertFails(setDoc(doc(db,'users/alice/records/bad-capture'),{...capture,id:'bad-capture',data:{...capture.data,clarificationDraft:{mode:'split',action:'',noteTitle:'',noteBody:'',homeId:'unsafe/path',relatedIds:[]}}}));
+});
 test('actual Firebase transport syncs offline captures, edits, deletion and guest merge', async () => {
   const a = new NookDatabase(crypto.randomUUID()); const b = new NookDatabase(crypto.randomUUID());
   const services = initializeNookFirebase({projectId: 'demo-nook', apiKey: 'demo-nook', appId: 'demo-nook', storageBucket: 'demo-nook.appspot.com'}, '127.0.0.1');

@@ -34,21 +34,20 @@ test('a dated daily note edits, links and reopens without duplicate creation off
   await page.getByRole('button',{name:'Projects',exact:true}).click();
   await page.getByRole('textbox',{name:'New project title'}).fill('Garden focus');
   await page.getByRole('button',{name:'+ Add project'}).click();
+  const dailyDate=await page.evaluate(()=>{const date=new Date();return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;});
   await page.getByRole('button',{name:'Calendar',exact:true}).click();
-  await page.getByLabel('Daily agenda',{exact:true}).fill('2026-09-30');
   await page.getByRole('button',{name:'Open daily note',exact:true}).click();
   await page.getByRole('textbox',{name:'Note body',exact:true}).fill('## Wins\n\nDaily offline journal');
   await page.getByRole('combobox',{name:'Link related item',exact:true}).selectOption({label:'Garden focus'});
   await page.getByRole('button',{name:'Save',exact:true}).click();
   await expect(page.getByRole('status')).toContainText('Saved locally');
   await page.reload();await page.getByRole('button',{name:'Calendar',exact:true}).click();
-  await page.getByLabel('Daily agenda',{exact:true}).fill('2026-09-30');
   await page.getByRole('button',{name:'Open daily note',exact:true}).click();
   await expect(page.getByRole('textbox',{name:'Note body',exact:true})).toHaveValue('## Wins\n\nDaily offline journal');
   await expect(page.getByRole('button',{name:'Garden focus',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Search',exact:true}).click();
   await page.getByRole('textbox',{name:'Search your Nook'}).fill('Daily offline journal');
-  await expect(page.getByRole('button',{name:'dailyNote Daily note · 2026-09-30',exact:true})).toHaveCount(1);
+  await expect(page.getByRole('button',{name:`dailyNote Daily note · ${dailyDate}`,exact:true})).toHaveCount(1);
 });
 
 test('saving an unsaved project draft preserves its archive state offline',async({page,context})=>{
@@ -79,9 +78,13 @@ test('Markdown selection formatting, note links, backlinks and original attachme
     await page.getByRole('dialog').getByRole('button',{name:'Save',exact:true}).click();
     await page.getByRole('button',{name:'Inbox',exact:true}).click();
     await page.getByRole('button',{name:'Note',exact:true}).click();
-    await page.getByRole('textbox',{name:'Title',exact:true}).fill(title);
+    await page.getByText('More options',{exact:true}).click();
+    await page.getByRole('textbox',{name:'Note title',exact:true}).fill(title);
     await page.getByRole('button',{name:'Save',exact:true}).click();
-    await expect(page.getByRole('status')).toContainText('Saved locally');
+    await page.getByRole('button',{name:'Inbox',exact:true}).click();
+    await page.getByRole('button',{name:/^History/}).click();
+    await page.getByRole('button',{name:new RegExp(body)}).click();
+    await page.getByRole('button',{name:new RegExp(title)}).click();
   }
   await note('A destination','Garden'); await note('hello world','Editor proof');
   await page.getByRole('button',{name:'Edit note',exact:true}).click();
@@ -116,7 +119,7 @@ test('Markdown selection formatting, note links, backlinks and original attachme
   expect((await readFile((await download.path())!)).toString()).toBe('original offline bytes');
 });
 
-test('repeat configuration keeps unsaved edits and creates the next task offline', async ({page, context}) => {
+test('scheduled clarification configures a repeating task and creates the next task offline', async ({page, context}) => {
   await page.goto('/');
   await page.getByRole('button', {name: 'Use Nook without an account'}).click();
   await page.evaluate(async () => {await navigator.serviceWorker.ready;});
@@ -128,13 +131,21 @@ test('repeat configuration keeps unsaved edits and creates the next task offline
   await page.getByRole('button', {name: 'Save', exact: true}).click();
   await page.getByRole('button', {name: 'Inbox', exact: true}).click();
   await page.getByRole('button', {name: 'Task', exact: true}).click();
-  await page.getByLabel('Do date', {exact: true}).fill('2026-09-30');
-  await page.getByLabel('Deadline', {exact: true}).fill('2026-10-02');
+  const dates=await page.evaluate(()=>{const today=new Date();const deadline=new Date();deadline.setDate(deadline.getDate()+2);const next=new Date(today.getFullYear(),today.getMonth(),today.getDate()+7);const nextDeadline=new Date(today.getFullYear(),today.getMonth(),today.getDate()+9);const iso=(date:Date)=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;return {today:iso(today),todayLabel:today.toLocaleDateString('en',{month:'short',day:'numeric'}),deadline:iso(deadline),spokenDeadline:deadline.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'}),next:next.toLocaleDateString('en',{month:'short',day:'numeric'}),nextDeadline:nextDeadline.toLocaleDateString('en',{month:'short',day:'numeric'})};});
+  await page.locator('#main').getByRole('button', {name: 'Today', exact: true}).click();
+  await page.getByText('More options',{exact:true}).click();
+  await page.getByRole('button',{name:'Add an optional deadline',exact:true}).click();
+  const deadlinePicker=page.getByRole('dialog',{name:'Deadline',exact:true});
+  await deadlinePicker.getByRole('button',{name:dates.spokenDeadline,exact:true}).click();
+  await deadlinePicker.getByRole('button',{name:'Set date',exact:true}).click();
+  await page.getByRole('button',{name:'Save',exact:true}).click();
+  await page.getByRole('button',{name:/^History/}).click();
+  await page.getByRole('button',{name:/Plant care/}).click();
+  await page.getByRole('button',{name:/Plant care Task Open/}).click();
   await page.getByRole('combobox', {name: 'Frequency', exact: true}).selectOption('weekly');
-  await page.getByLabel('First scheduled date', {exact: true}).fill('2026-09-30');
   await page.getByRole('button', {name: 'Save repeat schedule'}).click();
   await expect(page.getByRole('status')).toContainText('Repeat schedule saved');
-  await expect(page.getByLabel('Do date', {exact: true})).toHaveValue('2026-09-30');
+  await expect(page.locator('.record-date-control .calendar-button').first()).toContainText(dates.todayLabel);
   await page.getByLabel('Completed', {exact: true}).check();
   await page.getByRole('button', {name: 'Save', exact: true}).click();
   await expect(page.getByRole('status')).toContainText('Saved locally');
@@ -143,9 +154,14 @@ test('repeat configuration keeps unsaved edits and creates the next task offline
   await page.getByRole('textbox', {name: 'Search your Nook'}).fill('Plant care');
   await expect(page.getByRole('button', {name: 'task Plant care', exact: true})).toHaveCount(2);
   await page.getByRole('button', {name: 'task Plant care', exact: true}).last().click();
+  if(await page.getByLabel('Completed',{exact:true}).isChecked()) {
+    await page.getByRole('button',{name:'Search',exact:true}).click();
+    await page.getByRole('textbox',{name:'Search your Nook'}).fill('Plant care');
+    await page.getByRole('button',{name:'task Plant care',exact:true}).first().click();
+  }
   await expect(page.getByLabel('Completed', {exact: true})).not.toBeChecked();
-  await expect(page.getByLabel('Do date', {exact: true})).toHaveValue('2026-10-07');
-  await expect(page.getByLabel('Deadline', {exact: true})).toHaveValue('2026-10-09');
+  await expect(page.locator('.record-date-control .calendar-button').first()).toContainText(dates.next);
+  await expect(page.locator('.record-deadline .calendar-button')).toContainText(dates.nextDeadline);
 });
 
 test('capture, clarify, edit, organize, complete, search, delete and reopen offline', async ({page,context}) => {
@@ -160,21 +176,27 @@ test('capture, clarify, edit, organize, complete, search, delete and reopen offl
   await page.getByRole('button',{name:'Save',exact:true}).click();
   await expect(page.getByRole('status')).toContainText('Saved to Inbox');
   await page.getByRole('button',{name:'Inbox',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'Offline proof',exact:true})).toBeVisible();
+  await expect(page.getByRole('textbox',{name:'Your thought',exact:true})).toHaveValue('Offline proof');
   await page.getByRole('button',{name:'Task',exact:true}).click();
-  await page.getByRole('textbox',{name:'Title',exact:true}).fill('Offline proof edited');
   const today = await page.evaluate(()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;});
-  await page.getByLabel('Do date',{exact:true}).fill(today);
-  await page.getByLabel('Deadline',{exact:true}).fill('2030-12-31');
+  await page.getByRole('textbox',{name:'Your thought',exact:true}).fill('Offline proof edited');
+  await page.locator('#main').getByRole('button',{name:'Today',exact:true}).click();
+  await page.getByText('More options',{exact:true}).click();
+  await page.getByRole('button',{name:'Add an optional deadline',exact:true}).click();
+  const farDate=await page.evaluate(()=>{const today=new Date();const date=new Date();date.setDate(date.getDate()+20);return {spoken:date.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'}),label:date.toLocaleDateString('en',{month:'short',day:'numeric'}),months:(date.getFullYear()-today.getFullYear())*12+date.getMonth()-today.getMonth()};});
+  const deadlinePicker=page.getByRole('dialog',{name:'Deadline',exact:true});
+  for(let index=0;index<farDate.months;index++) await deadlinePicker.getByRole('button',{name:'Next month',exact:true}).click();
+  await deadlinePicker.getByRole('button',{name:farDate.spoken,exact:true}).click();
+  await deadlinePicker.getByRole('button',{name:'Set date',exact:true}).click();
   await page.getByRole('button',{name:'Save',exact:true}).click();
-  await page.getByRole('button',{name:'Today',exact:true}).click();
-  await page.getByRole('checkbox',{name:'Complete Offline proof edited'}).click();
-  await expect(page.getByRole('checkbox',{name:'Complete Offline proof edited'})).toHaveCount(0);
+  await page.getByRole('navigation',{name:'Main navigation'}).getByRole('button',{name:'Today',exact:true}).click();
+  await page.getByRole('checkbox',{name:'Complete Offline proof edited',exact:true}).click();
+  await expect(page.getByRole('checkbox',{name:'Complete Offline proof edited',exact:true})).toHaveCount(0);
   await page.getByRole('button',{name:'Search',exact:true}).click();
   await page.getByRole('textbox',{name:'Search your Nook'}).fill('proof');
   await page.getByRole('button',{name:'task Offline proof edited'}).click();
   await expect(page.getByLabel('Completed',{exact:true})).toBeChecked();
-  await expect(page.getByLabel('Deadline',{exact:true})).toHaveValue('2030-12-31');
+  await expect(page.locator('.record-deadline .calendar-button')).toContainText(farDate.label);
   await page.getByRole('button',{name:'Archive',exact:true}).last().click();
   await page.getByRole('button',{name:'Archive',exact:true}).first().click();
   await page.getByRole('button',{name:'Restore',exact:true}).click();
@@ -192,7 +214,8 @@ test('capture, clarify, edit, organize, complete, search, delete and reopen offl
   await page.getByRole('button',{name:'Save',exact:true}).click();
   await page.getByRole('button',{name:'Inbox',exact:true}).click();
   await page.getByRole('button',{name:'Note',exact:true}).click();
-  await expect(page.getByRole('status')).toContainText('Organized locally');
+  await page.getByRole('button',{name:'Save',exact:true}).click();
+  await expect(page.getByRole('button',{name:'History (2)',exact:true})).toBeVisible();
   await page.reload();
   await page.getByRole('button',{name:'Search',exact:true}).click();
   await page.getByRole('textbox',{name:'Search your Nook'}).fill('persist');

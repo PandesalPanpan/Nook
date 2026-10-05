@@ -11,6 +11,16 @@ test('settings cannot contain provider credentials', () => {
   expect(() => parseEntity({...record, kind: 'settings', data: {tipsEnabled: true, dismissedTips: [], dailyNotesEnabled: false, inboxReviewEnabled: false, apiKey: 'local-only'}})).toThrow();
 });
 
+test('V1 stays strict while V2 adds clarification history, Resource homes, and explicit links', () => {
+  const base = JSON.parse(readFileSync('packages/schemas/fixtures/task.json', 'utf8'));
+  const task = {...base, schemaVersion:2, data:{...base.data, resourceId:'resource-1', relatedIds:['note-1'], sourceCaptureId:'capture-1'}};
+  expect(parseEntity(task)).toMatchObject({schemaVersion:2,data:{resourceId:'resource-1',relatedIds:['note-1'],sourceCaptureId:'capture-1'}});
+  expect(() => parseEntity({...task,schemaVersion:1})).toThrow();
+  const capture = {...base, kind:'capture', schemaVersion:2, data:{body:'Edited thought',captureType:'text',attachmentIds:[],originalBody:'Original wording',processedAt:100,processedIds:['note-1','task-1'],clarificationDraft:{mode:'split',action:'Replace the bulb',noteTitle:'Lighting',noteBody:'Warm light',homeId:'resource-1',doDate:'2026-10-06',relatedIds:['note-1']}}};
+  expect(parseEntity(capture)).toMatchObject({kind:'capture',data:{originalBody:'Original wording',processedIds:['note-1','task-1'],clarificationDraft:{mode:'split'}}});
+  expect(() => parseEntity({...capture,schemaVersion:1})).toThrow();
+});
+
 
 test('wire dates share Android calendar bounds across all five date fields', () => {
   const base = JSON.parse(readFileSync('packages/schemas/fixtures/task.json', 'utf8'));

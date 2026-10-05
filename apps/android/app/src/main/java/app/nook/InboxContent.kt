@@ -49,7 +49,7 @@ private val InboxInter = FontFamily(Font(R.font.inter))
     Image(bitmap.asImageBitmap(), null, Modifier.size(size.dp))
 }
 
-@Composable internal fun InboxContent(repository: NookRepository, captures: List<Record>, open: (Record) -> Unit, saved: () -> Unit) {
+@Composable internal fun InboxContent(repository: NookRepository, captures: List<Record>, open: (Record) -> Unit, saved: () -> Unit, historyCount: Int = 0, history: () -> Unit = {}) {
     val scope = rememberCoroutineScope()
     var draft by rememberSaveable { mutableStateOf("") }
     var saving by remember { mutableStateOf(false) }
@@ -75,6 +75,10 @@ private val InboxInter = FontFamily(Font(R.font.inter))
             Text(if(saving) "Saving…" else "Save", fontFamily = InboxInter, fontSize = 12.sp, color = if(draft.isBlank()) Color(0xff9c9187) else Color.White,
                 modifier = Modifier.background(if(draft.isBlank()) Color(0xff342d28) else Color(0xff3270e6), RoundedCornerShape(14.dp)).padding(horizontal = 12.dp, vertical = 6.dp))
         }
+    }
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+        Text("Inbox", fontFamily = InboxInter, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xfff5eee7))
+        TextButton(onClick = history, modifier = Modifier.heightIn(min = 44.dp)) { Text("History${if(historyCount > 0) " · $historyCount" else ""}", fontFamily = InboxInter, fontSize = 12.sp, color = Color(0xffcbbfb4)) }
     }
     BoxWithConstraints(Modifier.fillMaxWidth().heightIn(min = 52.dp).background(Color(0xff221d1a), RoundedCornerShape(20.dp))
         .border(1.dp, Color(0xff453d37), RoundedCornerShape(20.dp)).padding(horizontal = 14.dp)) {
@@ -107,10 +111,8 @@ private val InboxInter = FontFamily(Font(R.font.inter))
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(when(type) { "task" -> "TASK"; "image" -> "PHOTO"; "link" -> "LINK"; else -> "THOUGHT" }, fontFamily = InboxInter, fontSize = 10.sp, lineHeight = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xff9c9187))
                     Text(record.data["body"]?.jsonPrimitive?.contentOrNull?.ifBlank { "Photo capture" } ?: "Capture", fontFamily = InboxInter, fontSize = 13.sp, lineHeight = 18.2.sp, fontWeight = FontWeight.Medium, color = Color(0xfff5eee7), maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    Text("Captured ${formatCaptureTime(record.createdAt)}", fontFamily = InboxInter, fontSize = 10.sp, lineHeight = 15.sp, color = Color(0xff9c9187))
                 }
-                val minutes = ((System.currentTimeMillis() - record.createdAt).coerceAtLeast(0) / 60_000)
-                Text(when { minutes < 1 -> "Now"; minutes < 60 -> "${minutes}m"; minutes < 1440 -> "${minutes / 60}h"; minutes < 2880 -> "Yesterday"; else -> "${minutes / 1440}d" },
-                    modifier = Modifier.align(Alignment.Top), fontFamily = InboxInter, fontSize = 10.sp, lineHeight = 18.sp, color = Color(0xff9c9187))
             }
         }
         if(captures.isEmpty()) Text("Your Inbox is clear. Nothing to catch up on.", fontFamily = InboxInter, fontSize = 14.sp, color = Color(0xffcbbfb4))

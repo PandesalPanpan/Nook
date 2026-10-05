@@ -3,6 +3,7 @@ import type {Entity} from '../../../../packages/schemas/src';
 import {NoteEditor,outgoingNotes} from './NoteEditor';
 import {AttachmentList} from './AttachmentList';
 import {AiAssist} from './AiControls';
+import {ConnectedItemsControl, PrimaryHomeControl} from './RecordControls';
 
 export function noteContext(note:Entity<'note'>,records:Entity[]) {
   const context=([['resource',note.data.resourceId],['project',note.data.projectId],['area',note.data.areaId]] as const)
@@ -33,12 +34,12 @@ export function NoteRecord({record,draft,records,field,open,saving,save,archive,
       <AiAssist record={record}/>
     </section>
     <aside className="record-side note-record-side">
+      <PrimaryHomeControl record={draft} records={records} change={values=>Object.entries(values).forEach(([key,value])=>field(key,value))}/>
+      <ConnectedItemsControl record={record} data={draft.data} records={records} open={open} change={ids=>field('relatedIds',ids)}/>
       <section className="panel note-backlinks" aria-labelledby="note-backlinks-heading"><h3 id="note-backlinks-heading">Backlinks</h3><p>{backlinks.length} {backlinks.length===1?'note references':'notes reference'} this</p>
         {backlinks.map(note=><button key={note.id} className="linked-record" onClick={()=>open(note)}><strong>{note.kind==='dailyNote'?`Daily note · ${note.data.date}`:note.data.title || 'Untitled note'}</strong><span>Linked note</span></button>)}
       </section>
-      <section className="panel note-details"><h3>Details</h3><dl><dt>Created</dt><dd>{new Date(record.createdAt).toLocaleString()}</dd><dt>Updated</dt><dd>{new Date(record.updatedAt).toLocaleString()}</dd><dt>Location</dt><dd>{context.description==='Saved locally'?'Notes':context.description}</dd><dt>Sync</dt><dd>Saved locally</dd></dl>
-        <details><summary>Organize note</summary>{(['project','resource','area'] as const).map(kind=><label key={kind}>{kind[0].toUpperCase()+kind.slice(1)}<select value={draft.data[`${kind}Id`]??''} onChange={e=>field(`${kind}Id`,e.target.value || undefined)}><option value="">No {kind}</option>{records.filter(item=>item.kind===kind && item.accountId===record.accountId && !item.deleted && !item.archived).map(item=><option key={item.id} value={item.id}>{'title' in item.data?item.data.title:''}</option>)}</select></label>)}</details>
-      </section>
+      <section className="panel note-details"><h3>Details</h3><dl><dt>Created</dt><dd>{new Date(record.createdAt).toLocaleString()}</dd><dt>Updated</dt><dd>{new Date(record.updatedAt).toLocaleString()}</dd><dt>Location</dt><dd>{context.description==='Saved locally'?'Notes':context.description}</dd><dt>Sync</dt><dd>Saved locally</dd></dl></section>
     </aside>
   </div>;
 }

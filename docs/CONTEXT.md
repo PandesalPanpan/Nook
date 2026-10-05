@@ -1,5 +1,26 @@
 # PARA context
 
+## Glossary
+
+- **Capture (thought):** An item in the Inbox awaiting clarification.
+- **Clarification:** Deciding whether a capture becomes a Task or Note and optionally assigning its organizational context.
+- **Task:** An action to do.
+- **Note:** Information to keep.
+- **Organizational context (home):** A Project, Area, or Resource associated with a clarified item; distinct from its Task or Note type.
+- **Project:** Work toward an outcome; can contain Tasks and Notes.
+- **Area:** An ongoing responsibility; can contain Tasks and Notes.
+- **Resource:** A collection around a topic or interest; can contain Tasks and Notes.
+- **Primary home:** The single Project, Area, or Resource where a Task or Note is filed. An item's Project can provide its Area context.
+- **Related link:** A connection to another item without assigning an additional primary home.
+- **Linked items:** Separate records connected by a related link visible from either item. Linking does not embed one item inside the other's content.
+- **Split capture:** One capture clarified into a Note and a related Task, with each resulting item independently editable.
+- **Processed capture:** A capture that has left the Inbox after clarification, retained in processed history with its original wording and links to the resulting items.
+- **Schedule (planned date / do date):** When the user intends to work on a Task.
+- **Deadline:** When a Task must be finished, independently of its planned date.
+- **Focused processing:** Clarifying one Inbox capture at a time, with Save & next advancing to the next capture.
+
+## Existing context reference
+
 Projects can belong to an Area. Tasks, Notes and Resources can reference a Project and/or Area; Notes can also belong to a Resource collection. Resource collections retain their description, optional URL, linked notes and original attachments.
 
 Resource projectId/areaId fields are optional additions to the V1 JSON payload. Existing records remain valid. Room/Dexie store payload JSON, so this addition needs no table migration or database reset. Backups retain the relationships. Both applications and the included Firestore rules must be updated together before syncing these fields; older strict V1 readers will reject fields they do not recognize.

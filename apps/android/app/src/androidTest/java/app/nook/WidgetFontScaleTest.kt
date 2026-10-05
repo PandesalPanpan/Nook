@@ -22,7 +22,6 @@ import app.nook.data.*
 import app.nook.integration.*
 import java.io.File
 import java.time.LocalDate
-import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.*
 import org.junit.Assert.*
@@ -32,21 +31,28 @@ class WidgetFontScaleTest {
     @Test fun realRemoteViewsKeepScaledTextAndActionsInsideSmallAndNormalWidgets() = runBlocking {
         val original = ApplicationProvider.getApplicationContext<Context>()
         val instrumentation = InstrumentationRegistry.getInstrumentation()
-        val session = original.getSharedPreferences("nook-session", Context.MODE_PRIVATE)
-        val previous = session.getString("accountId", null)
-        session.edit().putString("accountId", "local:widget-font-${UUID.randomUUID()}").commit()
+        AppGraph.initializeFirebase(original)
+        val repo = AppGraph.activeRepository(original)
+        assertTrue("widget fixtures must use the app's offline namespace", repo.accountId.startsWith("local:"))
+        val createdIds = mutableListOf<String>()
+        val widgetPreferences = original.getSharedPreferences("nook-widgets", Context.MODE_PRIVATE)
+        var widgetKey: String? = null
+        var previousWidgetTarget: String? = null
         val host = AppWidgetHost(original, 70133)
         var widgetId: Int? = null
         try {
-            val repo = AppGraph.repository(original)
-            repeat(3) { repo.capture("A long thought to clarify later $it") }
+            repeat(3) { createdIds += repo.capture("A long thought to clarify later $it").id }
             val project = repo.create("project", wireJson.encodeToJsonElement(Project("Classroom Management System", progress = 64.0, targetDate = "2026-10-18")) as JsonObject)
+            createdIds += project.id
             val task = repo.create("task", wireJson.encodeToJsonElement(Task("Finish the display prototype", doDate = LocalDate.now().toString(), projectId = project.id)) as JsonObject)
+            createdIds += task.id
             repo.update(project.id) { it.copy(data = JsonObject(it.data + ("nextActionId" to JsonPrimitive(task.id)))) }
             ParcelFileDescriptor.AutoCloseInputStream(instrumentation.uiAutomation.executeShellCommand("appwidget grantbind --package app.nook --user 0")).use { it.readBytes() }
             widgetId = host.allocateAppWidgetId()
             assertTrue(AppWidgetManager.getInstance(original).bindAppWidgetIdIfAllowed(widgetId, ComponentName(original, ProjectWidgetReceiver::class.java)))
-            original.getSharedPreferences("nook-widgets", Context.MODE_PRIVATE).edit().putString("${repo.accountId}:$widgetId", project.id).commit()
+            widgetKey = "${repo.accountId}:$widgetId"
+            previousWidgetTarget = widgetPreferences.getString(widgetKey, null)
+            widgetPreferences.edit().putString(widgetKey, project.id).commit()
             val fixtures = listOf(
                 Triple("capture-small", CaptureWidget(), DpSize(56.dp, 56.dp)),
                 Triple("capture", CaptureWidget(), DpSize(128.dp, 128.dp)),
@@ -79,6 +85,14 @@ class WidgetFontScaleTest {
                         }
                         visit(view)
                         assertTrue("$name at $scale must render text", texts.isNotEmpty())
+                        if(name == "capture") {
+                            val plus = texts.single { it.text.toString() == "+" }
+                            val caption = texts.single { it.text.toString() == "Capture" }
+                            val plusBounds = Rect(0, 0, plus.width, plus.height).also { container.offsetDescendantRectToMyCoords(plus, it) }
+                            val captionBounds = Rect(0, 0, caption.width, caption.height).also { container.offsetDescendantRectToMyCoords(caption, it) }
+                            val groupCenter = (plusBounds.top + captionBounds.bottom) / 2f
+                            assertTrue("Capture glyph and label must be centered together at $scale: $plusBounds / $captionBounds / $height", kotlin.math.abs(groupCenter - height / 2f) <= 2 * density)
+                        }
                         for(text in texts) {
                             val bounds = Rect(0, 0, text.width, text.height)
                             container.offsetDescendantRectToMyCoords(text, bounds)
@@ -92,7 +106,7 @@ class WidgetFontScaleTest {
                         }
                         if(name.startsWith("quick")) assertEquals(setOf("Text", "Task", "Photo", "Link"), texts.map { it.text.toString() }.filter { it in setOf("Text", "Task", "Photo", "Link") }.toSet())
                         if(name.startsWith("inbox")) { assertTrue(texts.any { it.text.toString().startsWith("Process") }); assertTrue(texts.any { it.text.toString() in setOf("+ Capture", "Capture") || it.contentDescription?.toString() == "Quick capture" }) }
-                        if(name.startsWith("today")) assertTrue(texts.any { it.text.toString() == "Finish the display prototype" })
+                        if(name.startsWith("today")) assertTrue("$name at $scale: ${texts.map { it.text }}", texts.any { it.text.toString() == "Finish the display prototype" })
                         if(name.startsWith("project")) { assertTrue(texts.any { it.text.toString() == "Classroom Management System" }); assertTrue(texts.any { it.text.toString().contains("64%") }); assertTrue(texts.any { it.text.toString() == "Start" }) }
                         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
                         container.draw(Canvas(bitmap))
@@ -102,7 +116,12 @@ class WidgetFontScaleTest {
             }
         } finally {
             widgetId?.let { host.deleteAppWidgetId(it) }
-            if(previous == null) session.edit().remove("accountId").commit() else session.edit().putString("accountId", previous).commit()
+            widgetKey?.let { key ->
+                val editor = widgetPreferences.edit()
+                if(previousWidgetTarget == null) editor.remove(key) else editor.putString(key, previousWidgetTarget)
+                editor.commit()
+            }
+            createdIds.asReversed().forEach { id -> repo.get(id)?.takeIf { !it.deleted }?.let { repo.delete(id) } }
         }
     }
 }

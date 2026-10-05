@@ -21,7 +21,7 @@ test('offline photo capture processes and roundtrips original bytes and Markdown
   const destination = repo('local:other'); await restoreBackup(destination, zip);
   expect((await destination.list('note'))[0].data).toMatchObject({body: '**Markdown**'});
   expect((await destination.db.files.get(['local:other', attachment.id]))?.bytes).toEqual(new Uint8Array([1,2,3]));
-  expect(await destination.list('capture')).toEqual([]);
+  expect(await destination.list('capture')).toMatchObject([{id:capture.id,schemaVersion:2,data:{body:'',originalBody:'',processedIds:[note.id]}}]);
   expect(await restoreBackup(destination, zip)).toBe(0);
 });
 test('invalid manifest cannot partially restore a valid record', async () => {
@@ -49,6 +49,7 @@ test('deleting an owner deletes original files and backup restore cannot bring t
   await restoreBackup(source, backup);
   expect(await source.list('note')).toEqual([]);
   expect(await source.list('attachment')).toEqual([]);
+  expect(await source.list('capture')).toMatchObject([{id:capture.id,data:{processedIds:[note.id],processedAt:expect.any(Number)}}]);
   expect(await source.db.files.get([source.accountId, attachment.id])).toBeUndefined();
 });
 test('capture stores no empty thought and file data migrates with guest account', async () => {

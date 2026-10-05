@@ -7,7 +7,7 @@ private val wireIdentity = Regex("^[A-Za-z0-9:_-]{1,128}$")
 
 /** Bounds shared with the web schema, before a local write or imported/remote record is accepted. */
 private fun validatePayloadBounds(data: JsonObject) {
-    val lengths = mapOf("body" to 500000, "outcome" to 500000, "responsibility" to 500000,
+    val lengths = mapOf("body" to 500000, "originalBody" to 500000, "outcome" to 500000, "responsibility" to 500000,
         "standards" to 500000, "description" to 500000, "title" to 10000,
         "filename" to 10000, "url" to 10000, "mimeType" to 256,
         "storagePath" to 1024, "displayName" to 256)
@@ -15,7 +15,7 @@ private fun validatePayloadBounds(data: JsonObject) {
         require(value is JsonPrimitive && value.isString && value.content.length <= limit) { "Invalid $field" }
     }
     for (field in listOf("projectId", "areaId", "resourceId", "parentTaskId", "reminderId",
-        "recurrenceId", "nextActionId", "ownerId", "sourceId", "targetId")) data[field]?.let { value ->
+        "recurrenceId", "nextActionId", "ownerId", "sourceId", "targetId", "sourceCaptureId")) data[field]?.let { value ->
         require(value is JsonPrimitive && value.isString && wireIdentity.matches(value.content)) { "Invalid $field" }
     }
     for (field in listOf("attachmentIds", "relatedIds")) data[field]?.let { value ->
@@ -40,17 +40,34 @@ private fun validateDate(value: String) {
 fun validate(record: Record): Record {
     val identity = wireIdentity
     require(identity.matches(record.id) && identity.matches(record.accountId) && identity.matches(record.clientId))
-    require(record.schemaVersion == 1 && record.createdAt in 0..MAX_WIRE_INTEGER && record.updatedAt in record.createdAt..MAX_WIRE_INTEGER)
+    require(record.schemaVersion in setOf(1, 2) && record.createdAt in 0..MAX_WIRE_INTEGER && record.updatedAt in record.createdAt..MAX_WIRE_INTEGER)
     val data = record.data
+    if(record.schemaVersion == 1) {
+        val extensions = when(record.kind) {
+            "capture" -> setOf("originalBody", "processedAt", "processedIds", "clarificationDraft")
+            "note" -> setOf("relatedIds", "sourceCaptureId")
+            "task" -> setOf("resourceId", "relatedIds", "sourceCaptureId")
+            else -> emptySet()
+        }
+        require(data.keys.none { it in extensions }) { "Schema V1 records cannot contain V2 fields" }
+    }
     validatePayloadBounds(data)
     when (record.kind) {
         "capture" -> wireJson.decodeFromJsonElement(Capture.serializer(), data).also {
             require(it.captureType in setOf("text", "task", "link", "image")); require(it.body.length <= 500000)
+            require(it.originalBody == null || it.originalBody.length <= 500000)
+            require(it.processedAt == null || it.processedAt in record.createdAt..MAX_WIRE_INTEGER)
+            it.processedIds?.forEach { id -> require(identity.matches(id)) }
+            it.clarificationDraft?.let { draft ->
+                require(draft.mode in setOf("task", "note", "split")); draft.homeId?.let { id -> require(identity.matches(id)) }
+                draft.relatedIds.forEach { id -> require(identity.matches(id)) }; draft.doDate?.let(::validateDate); draft.deadline?.let(::validateDate)
+            }
         }
-        "note" -> wireJson.decodeFromJsonElement(Note.serializer(), data).also { require(it.body.length <= 500000 && it.title.length <= 10000) }
+        "note" -> wireJson.decodeFromJsonElement(Note.serializer(), data).also { require(it.body.length <= 500000 && it.title.length <= 10000); it.relatedIds?.forEach { id -> require(identity.matches(id)) } }
         "task" -> wireJson.decodeFromJsonElement(Task.serializer(), data).also {
             require(it.title.length <= 10000)
             it.doDate?.let(::validateDate); it.deadline?.let(::validateDate)
+            it.relatedIds?.forEach { id -> require(identity.matches(id)) }
         }
         "project" -> wireJson.decodeFromJsonElement(Project.serializer(), data).also { require(it.progress in 0.0..100.0 && it.title.length <= 10000); it.targetDate?.let(::validateDate) }
         "area" -> wireJson.decodeFromJsonElement(Area.serializer(), data)

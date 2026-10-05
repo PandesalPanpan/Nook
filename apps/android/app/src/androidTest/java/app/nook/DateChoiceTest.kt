@@ -15,30 +15,29 @@ import org.junit.Test
 class DateChoiceTest {
     @get:Rule val compose = createComposeRule()
 
-    @Test fun calendarAndClockDialogsSelectValuesWithoutTypingAndCancelPreservesDate() {
+    @Test fun inAppCalendarShortcutsClearAndClockKeepTheirLocalValues() {
         var date by mutableStateOf("")
         var time by mutableStateOf(LocalTime.of(21, 30))
         compose.setContent { NookTheme { Column {
-            DateChoice("Do date", date) { date = it }
+            DateChoice("Schedule", date) { date = it }
             TimeChoice("Reminder time", time) { time = it }
         } } }
-        fun pressDialogButton(id: String) {
-            val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-            compose.waitUntil(5000) { automation.rootInActiveWindow?.findAccessibilityNodeInfosByViewId(id)?.isNotEmpty() == true }
-            assertTrue(automation.rootInActiveWindow.findAccessibilityNodeInfosByViewId(id).first().performAction(AccessibilityNodeInfo.ACTION_CLICK))
-            compose.waitForIdle()
-        }
-        compose.onNodeWithText("Do date · Choose date").performClick()
-        pressDialogButton("android:id/button1")
-        compose.runOnIdle { assertEquals(LocalDate.now().toString(), date) }
+        compose.onNodeWithText("Schedule · Choose date").performClick()
+        compose.onAllNodesWithText("Tomorrow").onLast().performClick()
+        compose.onNodeWithText("Set date").performClick()
+        compose.runOnIdle { assertEquals(LocalDate.now().plusDays(1).toString(), date) }
         compose.onNodeWithText("Tomorrow").performClick()
-        compose.onNode(hasText("Do date ·", substring = true) and hasClickAction()).performClick()
-        pressDialogButton("android:id/button2")
+        compose.onNode(hasText("Schedule ·", substring = true) and hasClickAction()).performClick()
+        compose.onAllNodesWithText("Today").onLast().performClick()
+        compose.onNodeWithText("Cancel").performClick()
         compose.runOnIdle { assertEquals(LocalDate.now().plusDays(1).toString(), date) }
         compose.onNode(hasText("Reminder time ·", substring = true) and hasClickAction()).performClick()
-        pressDialogButton("android:id/button1")
+        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
+        compose.waitUntil(5000) { automation.rootInActiveWindow?.findAccessibilityNodeInfosByViewId("android:id/button1")?.isNotEmpty() == true }
+        assertTrue(automation.rootInActiveWindow.findAccessibilityNodeInfosByViewId("android:id/button1").first().performAction(AccessibilityNodeInfo.ACTION_CLICK))
+        compose.waitForIdle()
         compose.runOnIdle { assertEquals(LocalTime.of(21, 30), time) }
-        compose.onNodeWithText("Clear Do date").performClick()
+        compose.onNodeWithText("Clear Schedule").performClick()
         compose.runOnIdle { assertEquals("", date) }
     }
 }

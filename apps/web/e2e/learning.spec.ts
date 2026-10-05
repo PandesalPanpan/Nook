@@ -11,8 +11,9 @@ test('PARA guide stays optional and contextual dismissals persist offline with s
   await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
   await page.getByRole('button',{name:'Quick capture',exact:true}).click();await page.getByRole('textbox',{name:'Thought',exact:true}).fill('Unsorted offline idea');await page.getByRole('button',{name:'Save',exact:true}).click();
   await page.getByRole('button',{name:'Organize',exact:true}).click();
+  await expect(page.getByRole('textbox',{name:'Your thought',exact:true})).toHaveValue('Unsorted offline idea');
+  await page.getByRole('button',{name:'Projects',exact:true}).click();
   await page.getByRole('button',{name:'Learn more',exact:true}).click();await page.getByRole('button',{name:'Close PARA guide'}).click();
-  await expect(page.getByRole('heading',{name:'Unsorted offline idea',exact:true,level:2})).toBeVisible();
   await page.getByRole('button',{name:'Got it',exact:true}).click();await expect(page.getByRole('region',{name:'PARA tip'})).toHaveCount(0);
   await page.reload();await page.getByRole('button',{name:'Inbox',exact:true}).click();await page.getByRole('button',{name:/THOUGHT Unsorted offline idea/}).click();
   await expect(page.getByRole('button',{name:'Got it',exact:true})).toHaveCount(0);
@@ -22,5 +23,5 @@ test('PARA guide stays optional and contextual dismissals persist offline with s
   await page.getByRole('button',{name:'Areas',exact:true}).click();await expect(page.getByRole('region',{name:'PARA tip'})).toHaveCount(0);
   await page.reload();await page.getByRole('button',{name:'Settings',exact:true}).click();await expect(page.getByRole('checkbox',{name:'Show contextual PARA tips'})).not.toBeChecked();
   await page.getByRole('button',{name:'Reset dismissed tips'}).click();await page.getByRole('checkbox',{name:'Show contextual PARA tips'}).check();
-  await page.getByRole('button',{name:'Inbox',exact:true}).click();await page.getByRole('button',{name:/THOUGHT Unsorted offline idea/}).click();await expect(page.getByRole('button',{name:'Got it',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Projects',exact:true}).click();await expect(page.getByRole('button',{name:'Got it',exact:true})).toBeVisible();
 });

@@ -9,6 +9,20 @@ class PayloadValidationTest {
         wireJson.parseToJsonElement(payload) as JsonObject, createdAt = 1, updatedAt = 1, clientId = "client")
     private fun rejected(record: Record) = assertTrue("Accepted ${record.kind}: ${record.data.keys}", runCatching { validate(record) }.isFailure)
 
+    @Test fun versionTwoRelationshipAndProcessingFieldsRequireV2() {
+        val v2Task = Record("task", "local:validation", "task", wireJson.parseToJsonElement(
+            """{"title":"Do it","completed":false,"resourceId":"resource","relatedIds":["note"],"sourceCaptureId":"capture"}"""
+        ) as JsonObject, schemaVersion = 2, createdAt = 1, updatedAt = 1, clientId = "client")
+        assertEquals(v2Task, validate(v2Task))
+        rejected(v2Task.copy(schemaVersion = 1))
+        val v2Capture = Record("capture", "local:validation", "capture", wireJson.parseToJsonElement(
+            """{"body":"Edited","captureType":"text","attachmentIds":[],"originalBody":"Original","processedAt":2,"processedIds":["note","task"],"clarificationDraft":{"mode":"split","action":"Do it","noteTitle":"Plan","noteBody":"Details","homeId":"resource","relatedIds":["note"]}}"""
+        ) as JsonObject, schemaVersion = 2, createdAt = 1, updatedAt = 2, clientId = "client")
+        assertEquals(v2Capture, validate(v2Capture))
+        rejected(v2Capture.copy(schemaVersion = 1))
+        rejected(v2Task.copy(data = JsonObject(v2Task.data + ("resourceId" to JsonPrimitive("unsafe/path")))))
+    }
+
     @Test fun relationshipIdsAndListsCannotCarryMalformedWireReferences() {
         val bases = listOf(
             record("note", """{"body":"","projectId":"valid","areaId":"valid","resourceId":"valid","attachmentIds":[]}"""),

@@ -29,7 +29,7 @@ test('desktop note source layout, keyboard links and original files persist offl
   await expect(page.locator('.page-header p')).toHaveText('Resource · ESP32');
   await expect(page.locator('.note-backlinks .linked-record')).toHaveCount(2);
   await expect(page.getByRole('textbox',{name:'Note body',exact:true})).toHaveCount(0);
-  await expect(page.locator('.note-details details')).not.toHaveAttribute('open');
+  await expect(page.locator('.record-home-control')).toContainText('ESP32');
   await expect(page.locator('.sidebar .brand-mascot')).toBeVisible();
   const assets=await page.locator('.sidebar img,.capture-trigger img').evaluateAll(nodes=>nodes.map(node=>{
     const image=node as HTMLImageElement;const rect=image.getBoundingClientRect();return {source:image.getAttribute('src'),width:rect.width,height:rect.height,loaded:image.complete && image.naturalWidth>0};
@@ -76,8 +76,9 @@ test('desktop note source layout, keyboard links and original files persist offl
   await expect(page.getByRole('button',{name:'original.txt',exact:true})).toBeVisible();
   const [download]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'original.txt',exact:true}).click()]);
   expect((await readFile((await download.path())!)).toString()).toBe('offline original');
-  await page.getByText('Organize note',{exact:true}).click();await page.getByRole('combobox',{name:'Resource',exact:true}).selectOption('');
-  await page.getByText('Organize note',{exact:true}).click();
+  await page.getByRole('button',{name:/Add to… ESP32/}).click();
+  await page.getByRole('dialog',{name:'Add to a Project, Area, or Resource'}).getByRole('button',{name:'No primary home',exact:true}).click();
+  await expect(page.locator('.record-home-control .home-trigger')).toContainText('Add to…');
   await page.getByRole('button',{name:'Archive',exact:true}).last().click();await expect(page.getByRole('button',{name:'Restore',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Restore',exact:true}).click();await page.reload();await openNote();
   await expect(page.locator('.page-header p')).toHaveText('Saved locally');

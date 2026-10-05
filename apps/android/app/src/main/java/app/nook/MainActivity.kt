@@ -155,11 +155,12 @@ class MainActivity : ComponentActivity() {
     val snackbar = remember { SnackbarHostState() }
     fun act(success: String = "Saved locally", block: suspend () -> Unit) { scope.launch { try { block(); app.nook.integration.scheduleSystemRefresh(context); message = success } catch (error: Exception) { message = error.message ?: "Could not save. Please try again." } } }
     LaunchedEffect(message) { if (message.isNotEmpty()) { snackbar.showSnackbar(message); message = "" } }
-    fun open(record: Record) { selectedId = record.id; page = when(record.kind) { "capture" -> "Inbox"; "project", "task" -> "Projects"; "area" -> "Areas"; else -> "Resources" } }
+    fun open(record: Record) { selectedId = record.id; page = when(record.kind) { "capture" -> if(record.value("processedAt").isNotBlank()) "History" else if(record.archived) "Archive" else "Inbox"; "project", "task" -> "Projects"; "area" -> "Areas"; else -> "Resources" } }
     val selected = records.find { it.id == selectedId }
     BackHandler(selectedId != null) { selectedId = null }
     val active = records.filter { !it.archived }
-    val captures = active.filter { it.kind == "capture" }
+    val captures = active.filter { it.kind == "capture" && it.value("processedAt").isBlank() }.sortedByDescending { it.createdAt }
+    val processedCaptures = records.filter { it.kind == "capture" && !it.deleted && it.value("processedAt").isNotBlank() }.sortedByDescending { it.value("processedAt").toLongOrNull() ?: 0L }
     val today = LocalDate.now().toString()
     val tasks = active.filter { it.kind == "task" && it.value("completed") != "true" }
     Scaffold(containerColor = Background, snackbarHost = { SnackbarHost(snackbar) }, bottomBar = {
@@ -183,8 +184,8 @@ class MainActivity : ComponentActivity() {
             if (page != "Sync" && selected?.kind != "note") Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(1.dp)) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                        Text(if(selected?.kind == "capture") "Clarify" else selected?.title() ?: if(page == "Today") "Good morning." else page, fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 30.sp, lineHeight = 42.sp, color = Text)
-                        if(selected?.kind == "capture") Copy("What is this useful for?")
+                        Text(if(selected?.kind == "capture" && selected.value("processedAt").isNotBlank()) "Processed thought" else if(selected?.kind == "capture") "Clarify" else selected?.title() ?: if(page == "Today") "Good morning." else page, fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 30.sp, lineHeight = 42.sp, color = Text)
+                        if(selected?.kind == "capture" && selected.value("processedAt").isBlank()) Copy("What is this useful for?")
                         if(selected == null && page == "Today") {
                             val dueCount = todayActions(tasks, active.filter { it.kind == "project" }, today).size
                             Copy(if(dueCount == 0) "A little room to think." else "$dueCount ${if(dueCount == 1) "thing" else "things"} worth doing.")
@@ -197,24 +198,16 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
-            if (selected?.kind == "capture") {
-                Column(Modifier.fillMaxWidth().heightIn(min = 168.dp).background(Surface, RoundedCornerShape(22.dp)).padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                    val captureLabel = when(selected.value("captureType")) { "task" -> "TASK"; "image" -> "PHOTO"; "link" -> "LINK"; else -> "THOUGHT" }
-                    Text(captureLabel, fontFamily = Inter, fontSize = 12.sp, lineHeight = 18.sp, color = Background,
-                        modifier = Modifier.background(Orange, RoundedCornerShape(14.dp)).padding(horizontal = 12.dp, vertical = 5.dp))
-                    Text(selected.value("body").ifBlank { "Photo capture" }, fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 20.sp, lineHeight = 28.sp, color = Text)
-                    val minutes = ((System.currentTimeMillis() - selected.createdAt).coerceAtLeast(0) / 60_000)
-                    Text(if(minutes == 0L) "Captured just now" else "Captured $minutes ${if(minutes == 1L) "minute" else "minutes"} ago", fontFamily = Inter, fontSize = 11.sp, lineHeight = 18.sp, color = Color(0xff9c9187))
-                }
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    var destinationProject by rememberSaveable(selected.id) { mutableStateOf("") }
-                    Text("Turn it into…", fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 13.sp, lineHeight = 18.2.sp, color = Text)
-                    RecordContextPicker("Assign to project", destinationProject, records.filter { it.kind == "project" && !it.deleted && !it.archived && it.accountId == repository.accountId }) { destinationProject = it }
-                    ClarifyDestinations(archived = selected.archived) { kind ->
-                        if(kind == "archive") act(if(selected.archived) "Restored" else "Archived") { repository.archive(selected.id, !selected.archived); selectedId = null }
-                        else act("Organized locally") { open(repository.process(selected.id, kind, destinationProject.takeIf { it.isNotBlank() && kind in listOf("task", "note", "resource") })) }
-                    }
-                    Action("Delete") { act("Deleted locally") { repository.delete(selected.id); selectedId = null } }
+            if (selected?.kind == "capture" && selected.value("processedAt").isNotBlank()) {
+                ProcessedCaptureContent(selected, records, ::open)
+            } else if(selected?.kind == "capture" && selected.archived) {
+                ArchivedThoughtContent(selected) { act("Restored to Inbox") { repository.archive(selected.id, false); selectedId = null; page = "Inbox" } }
+            } else if (selected?.kind == "capture") {
+                ClarificationContent(selected, captures, records, repository) { nextId ->
+                    app.nook.integration.scheduleSystemRefresh(context)
+                    selectedId = nextId
+                    page = "Inbox"
+                    message = "Saved locally"
                 }
                 AttachmentPanel(selected.id, records, repository)
                 key(selected.id) { AiAssist(repository, selected, records) }
@@ -225,14 +218,21 @@ class MainActivity : ComponentActivity() {
                         act { repository.update(task.id) { it.copy(data = JsonObject(it.data + ("completed" to JsonPrimitive(true)))) } }
                     }, { page = "Inbox" }, projects = active.filter { it.kind == "project" })
                 }
-                "Inbox" -> InboxContent(repository, captures, ::open) { act("Saved to Inbox") {} }
-                "More", "Library" -> listOf("Resources", "Areas", "Calendar", "Search", "Archive", "Weekly review", "Reminders", "Settings").forEach { destination -> Action(destination) { page = destination } }
+                "Inbox" -> InboxContent(repository, captures, ::open, { act("Saved to Inbox") {} }, processedCaptures.size) { selectedId = null; page = "History" }
+                "More", "Library" -> listOf("Resources", "Areas", "Calendar", "Search", "History", "Archive", "Weekly review", "Reminders", "Settings").forEach { destination -> Action(destination) { page = destination } }
                 "Search" -> SearchScreen(repository, ::open)
                 "Calendar" -> CalendarScreen(active, repository, ::open, { success, work -> act(success, work) })
                 "Settings" -> DataSettings(repository, { page = "Sync" }, { success, work -> act(success, work) }, updates, updateState)
                 "Sync" -> { val firebase by AppGraph.firebase.collectAsStateWithLifecycle(); app.nook.integration.AccountControls(repository, firebase) { page = "Today" } }
                 "Reminders" -> app.nook.integration.RemindersScreen(repository, records) { success, work -> act(success, work) }
                 "Weekly review" -> app.nook.integration.WeeklyReviewScreen(repository, records, ::open, { page = "Inbox" }, { success, work -> act(success, work) })
+                "History" -> {
+                    if(processedCaptures.isEmpty()) Copy("Processed thoughts will be kept here.")
+                    processedCaptures.forEach { thought -> Panel {
+                        Copy("PROCESSED THOUGHT · ${DateTimeFormatter.ofPattern("MMM d, yyyy · h:mm a").withZone(java.time.ZoneId.systemDefault()).format(java.time.Instant.ofEpochMilli(thought.value("processedAt").toLongOrNull() ?: thought.createdAt))}")
+                        Action(thought.value("originalBody").ifBlank { thought.value("body") }.ifBlank { "Photo capture" }) { open(thought) }
+                    } }
+                }
                 else -> {
                     val kind = when(page) { "Projects" -> "project"; "Areas" -> "area"; else -> "resource" }
                     var name by rememberSaveable(page) { mutableStateOf("") }
@@ -333,13 +333,15 @@ private fun readLimited(input: java.io.InputStream, max: Int): ByteArray {
     val areaFor=remember(records,record.accountId) { areaResolver(records,record.accountId) }
     var draft by remember(record.id) { mutableStateOf(record.data) }
     var baseline by remember(record.id) { mutableStateOf(record.data) }
+    var showTaskDeadline by rememberSaveable(record.id) { mutableStateOf(record.value("deadline").isNotBlank()) }
     LaunchedEffect(record.data) { if(draft == baseline) draft = record.data; baseline = record.data }
     fun value(key: String) = draft[key]?.jsonPrimitive?.contentOrNull.orEmpty()
     fun field(key: String, value: String) { draft = JsonObject(draft + (key to JsonPrimitive(value))) }
     fun optional(key: String, value: String) { draft = JsonObject(if(value.isBlank()) draft - key else draft + (key to JsonPrimitive(value))) }
     suspend fun persistDraft() { repository.update(record.id) { current ->
         val retained = if(current.kind == "task") setOf("reminderId", "recurrenceId") else setOf("attachmentIds")
-        current.copy(data = JsonObject(draft.filterKeys { it !in retained } + current.data.filterKeys { it in retained }))
+        val usesV2 = current.kind in setOf("task", "note") && draft.keys.any { it in setOf("resourceId", "relatedIds", "sourceCaptureId") }
+        current.copy(schemaVersion = if(usesV2) 2 else current.schemaVersion, data = JsonObject(draft.filterKeys { it !in retained } + current.data.filterKeys { it in retained }))
     } }
     fun openSaved(target: Record) {
         if(draft == baseline) open(target)
@@ -349,6 +351,8 @@ private fun readLimited(input: java.io.InputStream, max: Int): ByteArray {
         val capture = rememberAttachmentCapture(record.id, repository)
         NoteRecordContent(record, draft, records, repository, ::field, ::optional, ::persistDraft, ::openSaved, act,
             onAttach = capture.launch, attachmentStatus = if(capture.adding) "Adding attachment…" else capture.error, attachmentBusy = capture.adding)
+        RelatedItemsPanel(record.copy(data = draft), records, repository, draft["relatedIds"]?.jsonArray?.mapNotNull { it.jsonPrimitive.contentOrNull }.orEmpty(),
+            { ids -> draft = JsonObject(if(ids.isEmpty()) draft - "relatedIds" else draft + ("relatedIds" to JsonArray(ids.map(::JsonPrimitive)))) }, ::openSaved)
         AttachmentPanel(record.id, records, repository, capture)
         AiAssist(repository, record, records)
         return
@@ -362,15 +366,18 @@ private fun readLimited(input: java.io.InputStream, max: Int): ByteArray {
         }
         if(record.kind != "dailyNote") Field("Title", value("title")) { field("title", it) }
         when(record.kind) {
-            "task" -> { DateChoice("Do date", value("doDate")) { optional("doDate", it) }; Copy("When you intend to work on it"); DateChoice("Deadline", value("deadline")) { optional("deadline", it) }; Copy("When it must be finished"); Row(verticalAlignment = Alignment.CenterVertically) { Checkbox(value("completed") == "true", modifier = Modifier.semantics { contentDescription = "Completed" }, onCheckedChange = { draft = JsonObject(draft + ("completed" to JsonPrimitive(it))) }); Text("Completed") } }
+            "task" -> { DateChoice("Schedule", value("doDate")) { optional("doDate", it) }; Copy("When you intend to work on it"); TextButton(onClick = { showTaskDeadline = !showTaskDeadline }, modifier = Modifier.heightIn(min = 44.dp)) { Text(if(value("deadline").isBlank()) "Deadline · Optional" else "Deadline · ${value("deadline")}", color = Secondary) }; if(showTaskDeadline) DateChoice("Deadline", value("deadline")) { optional("deadline", it) }; Row(verticalAlignment = Alignment.CenterVertically) { Checkbox(value("completed") == "true", modifier = Modifier.semantics { contentDescription = "Completed" }, onCheckedChange = { draft = JsonObject(draft + ("completed" to JsonPrimitive(it))) }); Text("Completed") } }
             "project" -> { Field("Outcome", value("outcome"), true) { field("outcome", it) }; DateChoice("Target date", value("targetDate")) { optional("targetDate", it) }; Copy("Progress · ${value("progress")}%"); Slider(value("progress").toFloatOrNull() ?: 0f, modifier = Modifier.semantics { contentDescription = "Project progress" }, onValueChange = { draft = JsonObject(draft + ("progress" to JsonPrimitive(it.toDouble()))) }, valueRange = 0f..100f) }
             "area" -> { Field("Ongoing responsibility", value("responsibility"), true) { field("responsibility", it) }; Field("Standards", value("standards"), true) { field("standards", it) } }
             "resource" -> { Field("Description", value("description"), true) { field("description", it) }; Field("Link", value("url")) { optional("url", it) } }
             "dailyNote" -> app.nook.integration.NoteEditor(value("body"), { field("body", it) }, records.filter { it.kind == "note" && it.id != record.id && !it.deleted }, ::openSaved)
         }
-        if(record.kind in listOf("task", "note", "resource")) RecordContextPicker("Project", value("projectId"), records.filter { it.kind == "project" && !it.archived && !it.deleted }) { optional("projectId", it) }
-        if(record.kind in listOf("task", "project", "note", "resource")) RecordContextPicker("Area", value("areaId"), records.filter { it.kind == "area" && !it.archived && !it.deleted }) { optional("areaId", it) }
-        if(record.kind == "note") RecordContextPicker("Resource", value("resourceId"), records.filter { it.kind == "resource" && !it.archived && !it.deleted }) { optional("resourceId", it) }
+        if(record.kind == "task") RecordPrimaryHomePicker(records, record.accountId, value("projectId"), value("areaId"), value("resourceId"), repository) { project, area, resource ->
+            val homes = listOfNotNull(project.takeIf(String::isNotBlank)?.let { "projectId" to JsonPrimitive(it) }, area.takeIf(String::isNotBlank)?.let { "areaId" to JsonPrimitive(it) }, resource.takeIf(String::isNotBlank)?.let { "resourceId" to JsonPrimitive(it) }).toMap()
+            draft = JsonObject(draft.filterKeys { it !in setOf("projectId", "areaId", "resourceId") } + homes)
+        }
+        if(record.kind in listOf("resource")) RecordContextPicker("Project", value("projectId"), records.filter { it.kind == "project" && !it.archived && !it.deleted }) { optional("projectId", it) }
+        if(record.kind in listOf("project", "resource")) RecordContextPicker("Area", value("areaId"), records.filter { it.kind == "area" && !it.archived && !it.deleted }) { optional("areaId", it) }
         if(record.kind == "project") RecordContextPicker("Next action", value("nextActionId"), records.filter { it.kind == "task" && projectFor(it) == record.id && it.value("completed") != "true" && !it.archived && !it.deleted }) { optional("nextActionId", it) }
         Action("Save", true) { act("Saved locally") { persistDraft() } }
         Row { Action(if(record.archived) "Restore" else "Archive") { act(if(record.archived) "Restored" else "Archived") { repository.archive(record.id, !record.archived) } }; Action("Delete") { act("Deleted locally") { repository.delete(record.id) } } }
@@ -381,17 +388,20 @@ private fun readLimited(input: java.io.InputStream, max: Int): ByteArray {
     if(record.kind == "task") app.nook.integration.TaskRecurrenceEditor(record, records, repository, act)
     if(record.kind == "dailyNote") app.nook.integration.DailyRelatedEditor(draft["relatedIds"]?.jsonArray?.map { it.jsonPrimitive.content }.orEmpty(), records, record.id,
         { ids -> draft = JsonObject(draft + ("relatedIds" to JsonArray(ids.map(::JsonPrimitive)))) }, ::openSaved)
-    if(record.kind in listOf("project", "task")) Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    if(record.kind in listOf("task", "project", "area", "resource")) RelatedItemsPanel(record.copy(data = draft), records, repository,
+        draft["relatedIds"]?.jsonArray?.mapNotNull { it.jsonPrimitive.contentOrNull }.orEmpty(),
+        { ids -> draft = JsonObject(if(ids.isEmpty()) draft - "relatedIds" else draft + ("relatedIds" to JsonArray(ids.map(::JsonPrimitive)))) }, ::openSaved)
+    if(record.kind in listOf("project", "task", "resource")) Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Heading(if(record.kind == "task") "Subtasks" else "Tasks", if(record.kind == "project") 15 else 18)
-        records.filter { it.kind == "task" && !it.archived && !it.deleted && it.accountId == record.accountId && (if(record.kind == "project") projectFor(it) else it.value("parentTaskId")) == record.id }
+        records.filter { it.kind == "task" && !it.archived && !it.deleted && it.accountId == record.accountId && (when(record.kind) { "project" -> projectFor(it); "resource" -> it.value("resourceId"); else -> it.value("parentTaskId") }) == record.id }
             .sortedWith(compareBy<Record> { it.createdAt }.thenBy { it.id })
             .forEach { task -> ProjectTaskRow(task, { openSaved(task) }) { act("Saved locally") { repository.update(task.id) { it.copy(data = JsonObject(it.data + ("completed" to JsonPrimitive(it.value("completed") != "true")))) } } } }
         var name by rememberSaveable(record.id) { mutableStateOf("") }
         var adding by rememberSaveable(record.id) { mutableStateOf(false) }
-        if(record.kind == "project") TextButton(onClick = { adding = !adding }, modifier = Modifier.heightIn(min = 48.dp).semantics { stateDescription = if(adding) "Expanded" else "Collapsed" }) { Text(if(adding) "Hide new task" else "+ New task", color = NookReadableBlue) }
+        if(record.kind in listOf("project", "resource")) TextButton(onClick = { adding = !adding }, modifier = Modifier.heightIn(min = 48.dp).semantics { stateDescription = if(adding) "Expanded" else "Collapsed" }) { Text(if(adding) "Hide new task" else "+ New task", color = NookReadableBlue) }
         if(record.kind == "task" || adding) {
             Field("Next action", name) { name = it }
-            Action("Add task", enabled = name.isNotBlank()) { act("Task added") { persistDraft(); repository.create("task", wireJson.encodeToJsonElement(Task(name, projectId = if(record.kind == "project") record.id else value("projectId").ifBlank { null }, areaId = value("areaId").ifBlank { null }, parentTaskId = if(record.kind == "task") record.id else null)) as JsonObject); name = ""; adding = false } }
+            Action("Add task", enabled = name.isNotBlank()) { act("Task added") { persistDraft(); repository.create("task", wireJson.encodeToJsonElement(Task(name, projectId = if(record.kind == "project") record.id else value("projectId").ifBlank { null }, areaId = value("areaId").ifBlank { null }, resourceId = if(record.kind == "resource") record.id else value("resourceId").ifBlank { null }, parentTaskId = if(record.kind == "task") record.id else null)) as JsonObject); name = ""; adding = false } }
         }
     }
     if(record.kind == "project") {
@@ -468,8 +478,8 @@ private data class AttachmentCapture(val launch: () -> Unit, val adding: Boolean
         else keys.mapNotNull { key -> runCatching { LocalDate.parse(record.value(key)) }.getOrNull() }
     }.toSet() }
     var manualDate by rememberSaveable { mutableStateOf(false) }
+    var chooseAgendaDate by rememberSaveable { mutableStateOf(false) }
     var agendaActions by remember { mutableStateOf(false) }
-    val context = LocalContext.current
     val focus = LocalFocusManager.current
     CalendarMonth(selectedDay ?: LocalDate.now(), scheduledDays) { date = it.toString() }
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -479,12 +489,13 @@ private data class AttachmentCapture(val launch: () -> Unit, val adding: Boolean
                 Text("•••", fontFamily = Inter, fontSize = 14.sp, color = Secondary)
             }
             DropdownMenu(agendaActions, onDismissRequest = { agendaActions = false }) {
-                DropdownMenuItem(text = { Text("Choose date") }, onClick = { agendaActions = false; showDatePicker(context, date) { date = it } })
+                DropdownMenuItem(text = { Text("Choose date") }, onClick = { agendaActions = false; chooseAgendaDate = true })
                 DropdownMenuItem(text = { Text("Open daily note") }, enabled = selectedDay != null, onClick = { agendaActions = false; act("") { open(repository.dailyNote(date)) } })
                 DropdownMenuItem(text = { Text("Type date") }, onClick = { agendaActions = false; manualDate = true })
             }
         }
     }
+    if(chooseAgendaDate) CalendarDateDialog("Schedule", date, { chooseAgendaDate = false }, { date = it; chooseAgendaDate = false })
     if(manualDate) {
         Field("Daily agenda · YYYY-MM-DD", date) { date = it }
         TextButton(onClick = { focus.clearFocus(); manualDate = false }) { Text("Hide date entry") }

@@ -20,9 +20,10 @@ fun compareVersions(a: Record, b: Record): Int {
     return if (time != 0) time else a.clientId.compareTo(b.clientId)
 }
 
-@Serializable data class Capture(val body: String, val captureType: String = "text", val attachmentIds: List<String> = emptyList())
-@Serializable data class Note(val title: String = "", val body: String, val projectId: String? = null, val areaId: String? = null, val resourceId: String? = null, val attachmentIds: List<String> = emptyList())
-@Serializable data class Task(val title: String, val completed: Boolean = false, val doDate: String? = null, val deadline: String? = null, val reminderId: String? = null, val recurrenceId: String? = null, val projectId: String? = null, val areaId: String? = null, val parentTaskId: String? = null)
+@Serializable data class ClarificationDraft(val mode: String, val action: String = "", val noteTitle: String = "", val noteBody: String = "", val homeId: String? = null, val doDate: String? = null, val deadline: String? = null, val relatedIds: List<String> = emptyList())
+@Serializable data class Capture(val body: String, val captureType: String = "text", val attachmentIds: List<String> = emptyList(), val originalBody: String? = null, val processedAt: Long? = null, val processedIds: List<String>? = null, val clarificationDraft: ClarificationDraft? = null)
+@Serializable data class Note(val title: String = "", val body: String, val projectId: String? = null, val areaId: String? = null, val resourceId: String? = null, val attachmentIds: List<String> = emptyList(), val relatedIds: List<String>? = null, val sourceCaptureId: String? = null)
+@Serializable data class Task(val title: String, val completed: Boolean = false, val doDate: String? = null, val deadline: String? = null, val reminderId: String? = null, val recurrenceId: String? = null, val projectId: String? = null, val areaId: String? = null, val parentTaskId: String? = null, val resourceId: String? = null, val relatedIds: List<String>? = null, val sourceCaptureId: String? = null)
 @Serializable data class Project(val title: String, val outcome: String = "", val targetDate: String? = null, val progress: Double = 0.0, val areaId: String? = null, val nextActionId: String? = null)
 @Serializable data class Area(val title: String, val responsibility: String = "", val standards: String = "")
 @Serializable data class Resource(val title: String, val description: String = "", val url: String? = null, val projectId: String? = null, val areaId: String? = null)

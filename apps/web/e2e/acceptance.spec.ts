@@ -58,14 +58,14 @@ test('desktop Today and Inbox source hierarchy, visible contrast and local actio
   await page.setViewportSize({width:1440,height:900});
   const todayAssets=await page.locator('.sidebar img,.capture-trigger img').evaluateAll(images=>images.map(image=>{const item=image as HTMLImageElement;const box=item.getBoundingClientRect();return {src:item.getAttribute('src'),loaded:item.complete&&item.naturalWidth>0,width:box.width,height:box.height};}));
   expect(todayAssets).toHaveLength(9);for(const asset of todayAssets){expect(asset.loaded).toBe(true);if(asset.src==='/branding/nook-mascot-icon.png')expect(asset.width).toBe(28);else expect(asset.src).toMatch(/^\/figma\/3-154-/);expect(asset.width).toBe(asset.height);expect([18,24,28,32]).toContain(asset.width);}
-  await page.getByRole('button',{name:'Inbox',exact:true}).click();await expect(page.getByRole('heading',{name:'Research ESP32 deep sleep',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Inbox',exact:true}).click();await expect(page.getByRole('textbox',{name:'Your thought',exact:true})).toHaveValue('Research ESP32 deep sleep');
   await expect(page.locator('.capture-item')).toHaveCount(7);await readableVisibleText(page);await page.screenshot({path:'artifacts/branding/mascot/screenshots/web-inbox-v0.2.3.png',fullPage:true});
   const markers=await page.locator('.capture-item img').evaluateAll(images=>images.map(image=>{const item=image as HTMLImageElement;const box=item.getBoundingClientRect();return {src:item.getAttribute('src'),loaded:item.complete&&item.naturalWidth>0,width:box.width,height:box.height};}));
-  expect(markers.slice(0,5).map(item=>item.src)).toEqual([5,6,7,8,9].map(index=>`/figma/3-235-imgEllipse${index}.svg`));for(const item of markers){expect(item.loaded).toBe(true);expect(item.width).toBe(34);expect(item.height).toBe(34);}
+  expect(markers.slice(0,5).map(item=>item.src)).toEqual([5,6,7,8,5].map(index=>`/figma/3-235-imgEllipse${index}.svg`));for(const item of markers){expect(item.loaded).toBe(true);expect(item.width).toBe(34);expect(item.height).toBe(34);}
   await page.getByRole('button',{name:'Today',exact:true}).click();
   await page.getByRole('button',{name:'Open weekly review',exact:true}).click();await readableVisibleText(page);
   await page.keyboard.press('Tab');await page.getByRole('button',{name:'Review',exact:true}).focus();expect(await page.getByRole('button',{name:'Review',exact:true}).evaluate(element=>getComputedStyle(element).outlineStyle)).toBe('solid');await page.keyboard.press('Enter');await expect(page.getByRole('button',{name:'Review',exact:true})).toHaveAttribute('aria-expanded','true');
   await page.getByRole('button',{name:'Inbox',exact:true}).click();
-  await page.getByRole('button',{name:'Edit capture',exact:true}).click();await page.getByRole('textbox',{name:'Edit capture',exact:true}).fill('Keyboard thought proof');await page.keyboard.press('t');await expect(page.getByRole('textbox',{name:'Edit capture',exact:true})).toHaveValue('Keyboard thought prooft');await page.getByRole('button',{name:'Save edit',exact:true}).click();
-  await page.getByRole('region',{name:'Clarify capture',exact:true}).focus();await page.keyboard.press('t');await expect(page.getByLabel('Title',{exact:true})).toHaveValue('Keyboard thought prooft');
+  const thought=page.getByRole('textbox',{name:'Your thought',exact:true});await thought.fill('Keyboard thought proof');await page.keyboard.press('t');await expect(thought).toHaveValue('Keyboard thought prooft');
+  await page.getByRole('region',{name:'Clarify capture',exact:true}).focus();await page.keyboard.press('t');await expect(page.getByRole('button',{name:'Task',exact:true})).toHaveAttribute('aria-pressed','true');
 });

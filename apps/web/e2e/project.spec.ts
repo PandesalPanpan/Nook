@@ -36,6 +36,6 @@ test('desktop Project source workspace and local task controls persist offline',
   await openProject();await page.getByText('Project details',{exact:true}).click();await expect(page.getByRole('textbox',{name:'Outcome',exact:true})).toHaveValue('Preserved draft before related navigation');
   await page.getByRole('button',{name:'Archive',exact:true}).last().click();await expect(page.getByRole('button',{name:'Restore',exact:true})).toBeVisible();await page.getByRole('button',{name:'Restore',exact:true}).click();
   await page.getByRole('button',{name:'+ Add note',exact:true}).click();await expect(page.getByRole('textbox',{name:'Note body',exact:true})).toBeVisible();
-  await page.getByText('Organize note',{exact:true}).click();await expect(page.getByRole('combobox',{name:'Project',exact:true})).toHaveValue('project');
+  await expect(page.locator('.record-home-control .home-trigger')).toContainText('Classroom Management System');
 });
 

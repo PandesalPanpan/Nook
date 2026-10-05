@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -121,7 +122,7 @@ fun formatSelection(value: TextFieldValue, command: String): TextFieldValue {
     val trailingLink = remember(preview, body, notes) { if(preview) trailingNoteLink(body, notes) else null }
     Column(Modifier.fillMaxWidth().heightIn(min = if(preview) 384.dp else 220.dp)
         .background(Color(0xff221d1a), RoundedCornerShape(20.dp)).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-    if(!preview) OutlinedTextField(value, { value = it; change(it.text) }, label = { Text("Note body") }, modifier = Modifier.fillMaxWidth().heightIn(min = 220.dp), shape = RoundedCornerShape(16.dp))
+    if(!preview) OutlinedTextField(value, { value = it; change(it.text) }, label = { Text("Note body") }, modifier = Modifier.fillMaxWidth().heightIn(min = 220.dp).testTag("note-body-editor"), shape = RoundedCornerShape(16.dp))
     else AndroidView(modifier = Modifier.fillMaxWidth(), factory = { context -> TextView(context).apply {
         setTextColor(0xfff5eee7.toInt()); setLinkTextColor(0xff7ea7f3.toInt()); textSize = 14f
         typeface = ResourcesCompat.getFont(context, R.font.inter); setLineSpacing(0f, 1.4f)

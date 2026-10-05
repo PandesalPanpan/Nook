@@ -3,6 +3,7 @@ import type {Entity} from '../../../../packages/schemas/src';
 import {displayDate} from './runtime';
 import {AttachmentList} from './AttachmentList';
 import {AiAssist} from './AiControls';
+import {OptionalDateControl} from './RecordControls';
 
 export function projectContext(project:Entity<'project'>,records:Entity[]) {
   const area=records.find(item=>item.kind==='area' && item.id===project.data.areaId && item.accountId===project.accountId && !item.deleted && !item.archived);
@@ -39,7 +40,7 @@ export function ProjectRecord({record,draft,records,tasks,linked,field,open,task
     <section className="panel project-details"><details open={detailsOpen} onToggle={event=>setDetailsOpen(event.currentTarget.open)}><summary>Project details</summary><form onSubmit={e=>{e.preventDefault();save();}}>
       <label>Title<input value={draft.data.title} onChange={e=>field('title',e.target.value)}/></label>
       <label>Outcome<textarea value={draft.data.outcome} onChange={e=>field('outcome',e.target.value)}/></label>
-      <div className="two-fields"><label>Target date<input type="date" value={draft.data.targetDate??''} onChange={e=>field('targetDate',e.target.value||undefined)}/></label><label>Progress<input type="range" min="0" max="100" value={draft.data.progress} onChange={e=>field('progress',Number(e.target.value))}/></label></div>
+      <div className="two-fields"><OptionalDateControl title="Target date" value={draft.data.targetDate} change={value=>field('targetDate',value)}/><label>Progress<input type="range" min="0" max="100" value={draft.data.progress} onChange={e=>field('progress',Number(e.target.value))}/></label></div>
       <label>Area<select value={draft.data.areaId??''} onChange={e=>field('areaId',e.target.value||undefined)}><option value="">No area</option>{records.filter((item):item is Entity<'area'>=>item.kind==='area' && item.accountId===record.accountId && !item.deleted && !item.archived).sort(order).map(item=><option key={item.id} value={item.id}>{item.data.title}</option>)}</select></label>
       <label>Next action<select value={draft.data.nextActionId??''} onChange={e=>field('nextActionId',e.target.value||undefined)}><option value="">No next action</option>{tasks.filter(item=>!item.data.completed).map(item=><option key={item.id} value={item.id}>{item.data.title}</option>)}</select></label>
       <div className="row form-actions"><button className="primary" disabled={saving}>{saving?'Saving…':'Save'}</button><button type="button" onClick={archive}>{record.archived?'Restore':'Archive'}</button><button type="button" className="danger" onClick={remove}>Delete</button></div>

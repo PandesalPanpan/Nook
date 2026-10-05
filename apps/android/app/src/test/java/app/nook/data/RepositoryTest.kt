@@ -24,14 +24,51 @@ class RepositoryTest {
     private val db = Room.inMemoryDatabaseBuilder(context, NookDatabase::class.java).build()
     private val repo = NookRepository(db, "local:test", "android", { 100L })
     @After fun close() { db.close() }
-    @Test fun captureProcessingCommitsDestinationAndTombstone() = runTest {
+    @Test fun captureProcessingKeepsHistoryAndReusesTheSameDestination() = runTest {
         val capture = repo.capture("Read offline")
         val note = repo.process(capture.id, "note")
         assertEquals("note", note.kind)
-        assertTrue(repo.get(capture.id)!!.deleted)
+        val history = repo.get(capture.id)!!
+        val captureData = wireJson.decodeFromJsonElement(Capture.serializer(), history.data)
+        assertFalse(history.deleted)
+        assertEquals(2, history.schemaVersion)
+        assertEquals("Read offline", captureData.originalBody)
+        assertEquals(listOf(note.id), captureData.processedIds)
+        assertNotNull(captureData.processedAt)
         assertEquals(2, db.records().due(repo.accountId, 1000).size)
-        try { repo.process(capture.id, "task"); fail("Duplicate processing") } catch (_: IllegalStateException) { }
+        assertEquals(note.id, repo.process(capture.id, "task").id)
         assertEquals(2, db.records().all(repo.accountId).size)
+    }
+    @Test fun splitKeepsAttachmentsAndConnectsTaskAndNoteUnderAResource() = runTest {
+        val bytes = byteArrayOf(1, 2, 3, 4)
+        val capture = repo.capture("Original thought", "image", listOf(OriginalInput("room.jpg", "image/jpeg", bytes)))
+        val captureData = wireJson.decodeFromJsonElement(Capture.serializer(), capture.data)
+        val resource = repo.create("resource", wireJson.encodeToJsonElement(Resource("Bedroom")) as JsonObject)
+        repo.saveClarificationDraft(capture.id, "Edited thought", ClarificationDraft("split", "Replace the bulb", "Lighting", "Warm light", resource.id))
+        val results = repo.clarify(capture.id, "Edited thought", "split", "Replace the bulb", "Lighting", "Warm light", resource.id)
+        val note = results.first { it.kind == "note" }
+        val task = results.first { it.kind == "task" }
+        val noteData = wireJson.decodeFromJsonElement(Note.serializer(), note.data)
+        val taskData = wireJson.decodeFromJsonElement(Task.serializer(), task.data)
+        assertEquals(listOf(captureData.attachmentIds.single()), noteData.attachmentIds)
+        assertEquals(resource.id, noteData.resourceId)
+        assertEquals(resource.id, taskData.resourceId)
+        assertEquals(listOf(task.id), noteData.relatedIds)
+        assertEquals(listOf(note.id), taskData.relatedIds)
+        assertEquals(note.id, wireJson.decodeFromJsonElement(Attachment.serializer(), requireNotNull(repo.get(captureData.attachmentIds.single())).data).ownerId)
+        assertArrayEquals(bytes, db.records().original(repo.accountId, captureData.attachmentIds.single())!!.bytes)
+        assertEquals(listOf(note.id, task.id), repo.clarify(capture.id, "ignored", "task").map { it.id })
+        assertEquals(1, db.records().byKinds(repo.accountId, listOf("note")).count { it.decode().data["sourceCaptureId"] != null })
+    }
+    @Test fun failedClarificationRollsBackAndADeletedResultIsNeverRecreated() = runTest {
+        val capture = repo.capture("Schedule this")
+        try { repo.clarify(capture.id, "Schedule this", "task", deadline = "2026-02-30"); fail("Invalid date accepted") } catch (_: Exception) { }
+        assertNull(wireJson.decodeFromJsonElement(Capture.serializer(), repo.get(capture.id)!!.data).processedAt)
+        assertTrue(db.records().byKinds(repo.accountId, listOf("task")).isEmpty())
+        val task = repo.clarify(capture.id, "Schedule this", "task").single()
+        repo.delete(task.id)
+        try { repo.clarify(capture.id, "Schedule this", "task"); fail("Deleted result was recreated") } catch (_: IllegalStateException) { }
+        assertTrue(repo.get(task.id)!!.deleted)
     }
     @Test fun tombstoneDefeatsLaterClockEdit() = runTest {
         val capture = repo.capture("Private")
@@ -76,12 +113,12 @@ class RepositoryTest {
         assertEquals(1, db.records().search(repo.accountId, "garden").size)
         assertEquals(capture.id, repo.search("gard plan").single().id)
         val note = repo.process(capture.id, "note")
-        assertEquals(note.id, repo.search("garden").single().id)
+        assertEquals(setOf(note.id, capture.id), repo.search("garden").map { it.id }.toSet())
         repo.archive(note.id, true)
-        assertTrue(repo.search("garden", archived = false).isEmpty())
+        assertEquals(capture.id, repo.search("garden", archived = false).single().id)
         assertEquals(note.id, repo.search("garden", archived = true).single().id)
         repo.delete(note.id)
-        assertTrue(repo.search("garden").isEmpty())
+        assertEquals(capture.id, repo.search("garden").single().id)
     }
     @Test fun migrationRetainsRecordsAndBuildsFullTextIndex() = runTest {
         val name = "migration-${java.util.UUID.randomUUID()}.db"
